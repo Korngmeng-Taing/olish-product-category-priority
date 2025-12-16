@@ -11,20 +11,13 @@
     "href": "about.html",
     "title": "About the Team",
     "section": "",
-    "text": "This project was conducted as part of the Operations Research .\n\n\n\n[Taing Korngmeng] - role\n[Phal Menghak] - role\n[Sou Pichchomrong] - role\n\n\n\n\n\nLanguage: Python 3.10\nOptimization: PuLP (Linear Programming)\nReporting: Quarto & GitHub Pages\nIDE: VS Code"
+    "text": "This project was conducted as part of the Operations Research .\n\n\n\nTaing Korngmeng - role\nPhal Menghak - role\nSou Pichchomrong - role"
   },
   {
     "objectID": "about.html#team-members",
     "href": "about.html#team-members",
     "title": "About the Team",
     "section": "",
-    "text": "[Taing Korngmeng] - role\n[Phal Menghak] - role\n[Sou Pichchomrong] - role"
-  },
-  {
-    "objectID": "about.html#tools-used",
-    "href": "about.html#tools-used",
-    "title": "About the Team",
-    "section": "",
-    "text": "Language: Python 3.10\nOptimization: PuLP (Linear Programming)\nReporting: Quarto & GitHub Pages\nIDE: VS Code"
+    "text": "Taing Korngmeng - role\nPhal Menghak - role\nSou Pichchomrong - role"
   }
 ]
