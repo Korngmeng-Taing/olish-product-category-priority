@@ -1,5 +1,19 @@
 ---
-title: "About"
+title: "About the Team"
 ---
 
-About this site
+# Project Group 1
+This project was conducted as part of the **Operations Research** .
+
+## Team Members
+*   **[Taing Korngmeng]** - role
+*   **[Phal Menghak]** - role
+*   **[Sou Pichchomrong]** - role
+
+## Tools Used
+*   **Language:** Python 3.10
+*   **Optimization:** PuLP (Linear Programming)
+*   **Reporting:** Quarto & GitHub Pages
+*   **IDE:** VS Code
+
+## Repository

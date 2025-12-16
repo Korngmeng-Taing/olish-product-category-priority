@@ -1,0 +1,6 @@
+pandas
+pulp
+matplotlib
+seaborn
+jupyter
+ipykernel
