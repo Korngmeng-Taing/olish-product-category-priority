@@ -11,6 +11,6 @@ env/
 /_site/
 
 # Data files (recommended)
-data/*.csv
+#data/*.csv
 # System files
 .DS_Store
