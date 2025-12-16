@@ -1,0 +1,48 @@
+---
+title: "Data Analysis & Preparation"
+jupyter: python3
+---
+
+# 1. Data Processing Pipeline
+
+We begin by loading the raw datasets and merging them to create a unified view of "Sales vs. Logistics Cost".
+
+```{python}
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Set visual style
+sns.set_theme(style="whitegrid")
+
+# --- LOAD DATA ---
+try:
+    items = pd.read_csv('data/olist_order_items_dataset.csv')
+    products = pd.read_csv('data/olist_products_dataset.csv')
+    payments = pd.read_csv('data/olist_order_payments_dataset.csv')
+    print("Datasets loaded successfully.")
+except FileNotFoundError:
+    print("Error: CSV files not found. Check your 'data' folder location.")
+
+
+
+# --- MERGE & CLEAN ---
+# 1. Filter for valid paid orders
+valid_orders = payments['order_id'].unique()
+items = items[items['order_id'].isin(valid_orders)]
+
+# 2. Merge Items with Products (Link Price to Weight)
+df = pd.merge(items, products, on='product_id', how='inner')
+
+# 3. Drop Errors (Missing values or 0s)
+df = df.dropna(subset=['product_category_name', 'product_weight_g', 'price'])
+df = df[(df['product_weight_g'] > 0) & (df['price'] > 0)]
+
+# 4. Outlier Handling
+# We cap items at 30kg. Items heavier than this usually require special freight 
+# logic, so we exclude them to focus on standard warehouse capacity.
+df_clean = df[df['product_weight_g'] <= 30000].copy()
+
+print(f"Original Rows: {len(items)}")
+print(f"Cleaned Rows:  {len(df_clean)}")
+```

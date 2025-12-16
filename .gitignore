@@ -1,17 +1,20 @@
-# Python caches
+# Python
 __pycache__/
-*.pyc
+*.py[cod]
 
 # Virtual Environment
 venv/
 env/
 
-# Quarto temporary files
+# Quarto
 /.quarto/
 /_site/
-/.quarto/
+/_freeze/
+.ipynb_checkpoints/
 **/*.quarto_ipynb
-# Data files (recommended)
-#data/*.csv
 # System files
 .DS_Store
+Thumbs.db
+
+# Do NOT ignore 'docs' (we need it for GitHub Pages)
+# docs/  <-- Make sure this line does NOT exist or has a # in front

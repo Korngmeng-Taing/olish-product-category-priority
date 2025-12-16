@@ -1,6 +1,6 @@
 ---
-title: "Strategic Product Mix Optimization"
-subtitle: "Operations Research Project: Group 1"
+title: "Product Category prioritize maximize using linear programming "
+jupyter: python3
 format:
   html:
     theme: cosmo
