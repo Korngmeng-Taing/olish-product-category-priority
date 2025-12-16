@@ -1,7 +1,41 @@
 ---
-title: "olist_quarto"
+title: "Strategic Product Mix Optimization"
+subtitle: "Operations Research Project: Group 1"
+format:
+  html:
+    theme: cosmo
+    toc: true
 ---
 
-This is a Quarto website.
+# 1. Introduction
+**Olist** is a leading e-commerce marketplace in Brazil that connects small businesses to customers across the country. 
 
-To learn more about Quarto websites visit <https://quarto.org/docs/websites>.
+However, every logistics network has a breaking point. Olist has a limited **operational handling capacity** (defined by total weight and volume in their warehouses and shipping network). Because of this physical limitation, Olist cannot accept an infinite number of products.
+
+### The Business Challenge
+If Olist fills its trucks with heavy, cheap items (like bags of cement), they lose money. If they fill them with light, expensive items (like watches), they make money. The challenge is finding the **perfect mathematical balance**.
+
+::: {.callout-important}
+## Research Question
+**Which product categories should Olist prioritize to maximize total revenue, given the strict constraints on historical handling capacity?**
+:::
+
+# 2. Methodology
+To solve this, we apply **Linear Programming (Simplex Method)** following this workflow:
+
+1.  **Data Mining:** Extract historical sales behavior and physical product attributes.
+2.  **Preprocessing:** Clean missing value ,outlier.
+3.  **Mathematical Modeling:** Formulate an Objective Function ($Z$) and Constraints ($K$).
+4.  **Optimization:** Use the Python `PuLP` library to solve for the optimal quantity $x$.
+5.  **Result:** obtain the optimize result of linear programming.
+
+# 3. Data Overview
+We utilized three core datasets from the Olist public database.
+
+| Dataset | Description | Key Variables Used |
+| :--- | :--- | :--- |
+| **`olist_order_items`** | Transactional history | `price` (Revenue), `product_id` |
+| **`olist_products`** | Physical inventory specs | `product_weight_g` (Capacity Cost), `product_category_name` |
+| **`olist_order_payments`** | Order validation | `order_id` (Ensures valid, paid sales) |
+
+

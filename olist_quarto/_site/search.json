@@ -1,0 +1,16 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Strategic Product Mix Optimization",
+    "section": "",
+    "text": "1. Introduction\nOlist is a leading e-commerce marketplace in Brazil that connects small businesses to customers across the country.\nHowever, every logistics network has a breaking point. Olist has a limited operational handling capacity (defined by total weight and volume in their warehouses and shipping network). Because of this physical limitation, Olist cannot accept an infinite number of products.\n\nThe Business Challenge\nIf Olist fills its trucks with heavy, cheap items (like bags of cement), they lose money. If they fill them with light, expensive items (like watches), they make money. The challenge is finding the perfect mathematical balance.\n\n\n\n\n\n\nImportantResearch Question\n\n\n\nWhich product categories should Olist prioritize to maximize total revenue, given the strict constraints on historical handling capacity?\n\n\n\n\n\n2. Methodology\nTo solve this, we apply Linear Programming (Simplex Method) following this workflow:\n\nData Mining: Extract historical sales behavior and physical product attributes.\nPreprocessing: Clean missing value ,outlier.\nMathematical Modeling: Formulate an Objective Function (\\(Z\\)) and Constraints (\\(K\\)).\nOptimization: Use the Python PuLP library to solve for the optimal quantity \\(x\\).\nResult: obtain the optimize result of linear programming.\n\n\n\n3. Data Overview\nWe utilized three core datasets from the Olist public database.\n\n\n\n\n\n\n\n\nDataset\nDescription\nKey Variables Used\n\n\n\n\nolist_order_items\nTransactional history\nprice (Revenue), product_id\n\n\nolist_products\nPhysical inventory specs\nproduct_weight_g (Capacity Cost), product_category_name\n\n\nolist_order_payments\nOrder validation\norder_id (Ensures valid, paid sales)"
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "About this site"
+  }
+]
