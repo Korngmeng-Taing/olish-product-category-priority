@@ -1,6 +1,6 @@
 project:
   type: website
-
+  output-dir: docs
 website:
   title: "olist_quarto"
   navbar:
@@ -16,6 +16,3 @@ format:
       - brand
     css: styles.css
     toc: true
-
-
-
