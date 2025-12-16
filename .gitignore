@@ -1,0 +1,16 @@
+# Python caches
+__pycache__/
+*.pyc
+
+# Virtual Environment
+venv/
+env/
+
+# Quarto temporary files
+/.quarto/
+/_site/
+
+# Data files (recommended)
+data/*.csv
+# System files
+.DS_Store
