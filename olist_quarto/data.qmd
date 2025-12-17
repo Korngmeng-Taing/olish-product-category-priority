@@ -1,9 +1,10 @@
 ---
 title: "Data Analysis & Preparation"
 jupyter: python3
+
 ---
 
-# 1. Data Processing Pipeline
+# load Data
 
 We begin by loading the raw datasets and merging them to create a unified view of "Sales vs. Logistics Cost".
 
@@ -24,24 +25,63 @@ try:
 except FileNotFoundError:
     print("Error: CSV files not found. Check your 'data' folder location.")
 
+```
+#  dataset head , shape, missing value 
 
+```{python}
+#order_ item
+items.head()
 
+```
+```{python}
+print('Dataset has',items.shape[0],'rows and',items.shape[1],'columns') 
+print('Check missing value \n',items.isna().sum())
+```
+```{python}
+#order_ payment
+payments.head()
+```
+```{python}
+#order_ payment
+print('Dataset has',payments.shape[0],'rows and',payments.shape[1],'columns') 
+print('check missing value:\n',payments.isna().sum()) 
+```
+```{python}
+#product
+products.head()
+```
+```{python}
+#product
+
+print('Dataset has',products.shape[0],'rows and',products.shape[1],'columns') 
+print('check missing value:\n',products.isna().sum())
+```
+
+#  CLEAN 
+```{python}
 # --- MERGE & CLEAN ---
-# 1. Filter for valid paid orders
+## 1. Filter for valid paid orders
 valid_orders = payments['order_id'].unique()
 items = items[items['order_id'].isin(valid_orders)]
-
+items.head()
+```
+```{python}
 # 2. Merge Items with Products (Link Price to Weight)
 df = pd.merge(items, products, on='product_id', how='inner')
-
+df.head()
+```
+```{python}
 # 3. Drop Errors (Missing values or 0s)
 df = df.dropna(subset=['product_category_name', 'product_weight_g', 'price'])
 df = df[(df['product_weight_g'] > 0) & (df['price'] > 0)]
-
+df.head()
+```
+```{python}
 # 4. Outlier Handling
 # We cap items at 30kg. Items heavier than this usually require special freight 
 # logic, so we exclude them to focus on standard warehouse capacity.
 df_clean = df[df['product_weight_g'] <= 30000].copy()
+df_clean.head()
 
 print(f"Original Rows: {len(items)}")
 print(f"Cleaned Rows:  {len(df_clean)}")

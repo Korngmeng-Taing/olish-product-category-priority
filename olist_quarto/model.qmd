@@ -1,0 +1,6 @@
+---
+title: "Mathematical Optimization Model"
+jupyter: python3
+---
+
+# 1. Python Implementation (PuLP)

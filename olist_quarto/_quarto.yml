@@ -11,11 +11,16 @@ website:
         text: About team
       - href: data.qmd
         text: Data
+      - href: model.qmd
+        text: Model
 
 format:
   html:
-    theme:
-      - cosmo
-      - brand
-    css: styles.css
+    theme: flatly
+    highlight: ayu
     toc: true
+    toc-location: right
+    toc-depth: 1
+    number-sections: false
+    code-fold: true
+    df-print: paged

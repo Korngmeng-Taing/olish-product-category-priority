@@ -1,6 +1,6 @@
 ---
-title: "Product Category prioritize maximize using linear programming "
-jupyter: python3
+title: "Strategic Product Prioritization"
+subtitle: "Maximizing Revenue via Linear Programming"
 format:
   html:
     theme: cosmo
@@ -24,18 +24,91 @@ If Olist fills its trucks with heavy, cheap items (like bags of cement), they lo
 To solve this, we apply **Linear Programming (Simplex Method)** following this workflow:
 
 1.  **Data Mining:** Extract historical sales behavior and physical product attributes.
-2.  **Preprocessing:** Clean missing value ,outlier.
+2.  **Preprocessing:** Clean missing values, handle outliers, and merge datasets.
 3.  **Mathematical Modeling:** Formulate an Objective Function ($Z$) and Constraints ($K$).
 4.  **Optimization:** Use the Python `PuLP` library to solve for the optimal quantity $x$.
-5.  **Result:** obtain the optimize result of linear programming.
+5.  **Results:** Interpret the optimized solution to guide business strategy.
 
 # 3. Data Overview
-We utilized three core datasets from the Olist public database.
+We utilized three core datasets from the Olist public database. Below is the dictionary of attributes available in each file.
 
-| Dataset | Description | Key Variables Used |
-| :--- | :--- | :--- |
-| **`olist_order_items`** | Transactional history | `price` (Revenue), `product_id` |
-| **`olist_products`** | Physical inventory specs | `product_weight_g` (Capacity Cost), `product_category_name` |
-| **`olist_order_payments`** | Order validation | `order_id` (Ensures valid, paid sales) |
+### 1. Sales Data (`olist_order_items`)
+Contains the individual transaction lines.
 
+*   `order_id`: Unique identifier of the order.
+*   `order_item_id`: Sequential number identifying number of items included in the same order.
+*   `product_id`: Unique identifier used to link to product specs.
+*   `seller_id`: Unique identifier of the seller.
+*   `shipping_limit_date`: The seller shipping limit date for handling the order.
+*   **`price`**: The item price (Revenue Coefficient $P_i$).
+*   `freight_value`: Item freight cost.
 
+### 2. Product Specs (`olist_products`)
+Defines the physical characteristics and metadata of the inventory.
+
+*   `product_id`: Unique identifier of the product.
+*   **`product_category_name`**: The category name (Decision Variable Index $i$).
+*   `product_name_lenght`: Number of characters extracted from the product name.
+*   `product_description_lenght`: Number of characters extracted from the product description.
+*   `product_photos_qty`: Number of product published photos.
+*   **`product_weight_g`**: Product weight in grams (Capacity Coefficient $W_i$).
+*   `product_length_cm`: Product length in centimeters.
+*   `product_height_cm`: Product height in centimeters.
+*   `product_width_cm`: Product width in centimeters.
+
+### 3. Payments (`olist_order_payments`)
+Contains the payment details for validation purposes.
+
+*   `order_id`: Unique identifier of an order (Used for filtering valid sales).
+*   `payment_sequential`: Sequence of payments.
+*   `payment_type`: Method of payment (credit card, voucher, boleto, debit card).
+*   `payment_installments`: Number of installments chosen by the customer.
+*   `payment_value`: Transaction value.
+# 4. Data Source Mapping
+
+We formulated the problem using the following variables mapped from the Olist dataset:
+
+| Business Concept | Attribute | Dataset Source | Role in Model |
+| :--- | :--- | :--- | :--- |
+| **Product Category** | `product_category_name` | `olist_products` | **Decision Variable ($x_i$)**: The quantity to sell per category. |
+| **Unit Revenue** | `price` | `olist_order_items` | **Objective ($Z$)**: Maximize the sum of Price $\times$ Quantity. |
+| **Capacity** | `product_weight_g` | `olist_products` | **Constraint ($K$)**: Total weight cannot exceed the limit. |
+
+# 5. Mathematical Formulation
+
+We model this problem as a **Resource Allocation Problem** (specifically, a variant of the *Knapsack Problem*).
+
+### Sets & Indices
+*   $I$: The set of all product categories.
+*   $i$: Index representing a specific category (e.g., $i = \text{Watches}$).
+
+### Parameters (Data Inputs)
+These values were calculated in the Data Analysis phase:
+*   $P_i$: **Average Price** (Revenue) per unit of category $i$.
+*   $W_i$: **Average Weight** (Capacity Cost) per unit of category $i$.
+*   $D_i$: **Maximum Demand** (Historical sales count) for category $i$.
+*   $K$: **Total System Capacity** (Total weight limit).
+
+### Decision Variables
+*   $x_i$: The quantity of items to include in the product mix for category $i$.
+    *   *Constraint:* $x_i$ must be a non-negative Integer ($x_i \in \mathbb{Z}^+$).
+
+---
+
+### The Linear Program
+
+**1. Objective Function (Maximize Revenue)**
+We want to choose quantities ($x_i$) that maximize total sales value:
+$$ \text{Maximize } Z = \sum_{i \in I} (P_i \cdot x_i) $$
+
+**2. Capacity Constraint**
+The total weight of the selected mix cannot exceed the warehouse limit:
+$$ \sum_{i \in I} (W_i \cdot x_i) \leq K $$
+
+**3. Demand Constraints**
+We cannot optimize for more sales than the market actually wants:
+$$ x_i \leq D_i \quad \forall i \in I $$
+
+**4. Non-Negativity & Integrality**
+We cannot sell negative items or half an item:
+$$ x_i \geq 0, \quad x_i \text{ is Integer} $$
