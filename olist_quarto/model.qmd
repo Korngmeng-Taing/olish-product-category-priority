@@ -4,3 +4,113 @@ jupyter: python3
 ---
 
 # 1. Python Implementation (PuLP)
+
+```{python}
+import pandas as pd
+import pulp
+
+# --- STEP 1: LOAD DATA ---
+try:
+    # Load the parameters table (Pi, Wi, Di)
+    lp_data = pd.read_csv('data/lp_parameters.csv')
+    if lp_data.empty:
+        raise ValueError("Error: 'lp_parameters.csv' is empty.")
+    
+    # Load the scalar capacity value (K)
+    with open('data/capacity.txt', 'r') as f:
+        original_K = float(f.read())
+        
+    # --- THE FIX: INTRODUCE SCARCITY ---
+    # We reduce capacity to 75% of the historical volume. 
+    # This creates a "Limited Handling Capacity" as required by the problem.
+    K = original_K * 0.75 
+
+    print(f"Data Loaded Successfully.")
+    print(f"Categories to Optimize: {len(lp_data)}")
+    print(f"Original Historical Weight: {original_K:,.0f} g")
+    print(f"Simulated Capacity Limit (75%): {K:,.0f} g")
+
+except FileNotFoundError:
+    print("Error: Input files not found. Please run '01_data.qmd' first.")
+except ValueError as e:
+    print(e)
+```
+
+# Initial Model 
+```{python}
+if 'Category' in lp_data.columns:
+    categories = lp_data['Category'].tolist()
+else:
+    raise KeyError("Error: 'Category' column missing.")
+
+# 1. Initialize Model (Maximization)
+model = pulp.LpProblem("Olist_Revenue_Optimization", pulp.LpMaximize)
+
+# 2. Define Decision Variables
+x = pulp.LpVariable.dicts("Qty", categories, lowBound=0, cat='Integer')
+
+# 3. Objective Function: Maximize Total Revenue (Price * Quantity)
+model += pulp.lpSum([lp_data.loc[i, 'P_i'] * x[cat] 
+                     for i, cat in enumerate(categories)])
+
+# 4. Add Capacity Constraint: Total Weight handled must be <= K
+model += pulp.lpSum([lp_data.loc[i, 'W_i'] * x[cat] 
+                     for i, cat in enumerate(categories)]) <= K
+
+# 5. Add Demand Constraints: Quantity handled <= Market Demand
+for i, cat in enumerate(categories):
+    model += x[cat] <= lp_data.loc[i, 'D_i']
+``` 
+# Solving 
+```{python}
+# Solve using the CBC solver
+model.solve(pulp.PULP_CBC_CMD(msg=0))
+
+# Check the status
+status = pulp.LpStatus[model.status]
+print(f"Optimization Status: {status}")
+```
+# Result
+```{python}
+if status == 'Optimal':
+    results = []
+
+    for i, cat in enumerate(categories):
+        optimized_qty = x[cat].varValue
+        demand = lp_data.loc[i, 'D_i']
+
+        # Determine Status logic
+        if optimized_qty >= demand:
+            res_status = 'Full Demand Met'
+        elif optimized_qty > 0:
+            res_status = 'Prioritized (Partial)'
+        else:
+            res_status = 'Deprioritized (Cut)'
+
+        results.append({
+            'Category': cat,
+            'Price_Unit': lp_data.loc[i, 'P_i'],
+            'Weight_Unit': lp_data.loc[i, 'W_i'],
+            'Original_Demand': demand,
+            'Optimized_Qty': optimized_qty,
+            'Status': res_status
+        })
+
+    results_df = pd.DataFrame(results)
+
+    # Sort results to show which items were "Reduced/Cut" at the bottom
+    results_df = results_df.sort_values(by="Optimized_Qty", ascending=False)
+
+    # Save results
+    results_df.to_csv('data/results.csv', index=False)
+    print("Results saved to 'data/results.csv'")
+    
+    # Display top and bottom to see the "Optimization" in action
+    print("\n--- Top Categories (Prioritized) ---")
+    print(results_df.head(10)[['Category', 'Original_Demand', 'Optimized_Qty', 'Status']])
+    
+    print("\n--- Bottom Categories (Reduced due to capacity) ---")
+    print(results_df.tail(10)[['Category', 'Original_Demand', 'Optimized_Qty', 'Status']])
+else:
+    print("No feasible solution found.")
+```

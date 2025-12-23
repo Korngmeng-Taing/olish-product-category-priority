@@ -1,10 +1,6 @@
 ---
-title: "Strategic Product Prioritization"
+title: "Product Prioritization"
 subtitle: "Maximizing Revenue via Linear Programming"
-format:
-  html:
-    theme: cosmo
-    toc: true
 ---
 
 # 1. Introduction
@@ -64,6 +60,7 @@ Contains the payment details for validation purposes.
 *   `payment_type`: Method of payment (credit card, voucher, boleto, debit card).
 *   `payment_installments`: Number of installments chosen by the customer.
 *   `payment_value`: Transaction value.
+
 # 4. Data Source Mapping
 
 We formulated the problem using the following variables mapped from the Olist dataset:
@@ -83,7 +80,9 @@ We model this problem as a **Resource Allocation Problem** (specifically, a vari
 *   $i$: Index representing a specific category (e.g., $i = \text{Watches}$).
 
 ### Parameters (Data Inputs)
+
 These values were calculated in the Data Analysis phase:
+
 *   $P_i$: **Average Price** (Revenue) per unit of category $i$.
 *   $W_i$: **Average Weight** (Capacity Cost) per unit of category $i$.
 *   $D_i$: **Maximum Demand** (Historical sales count) for category $i$.

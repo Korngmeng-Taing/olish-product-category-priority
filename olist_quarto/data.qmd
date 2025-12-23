@@ -9,22 +9,20 @@ jupyter: python3
 We begin by loading the raw datasets and merging them to create a unified view of "Sales vs. Logistics Cost".
 
 ```{python}
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-
-# Set visual style
-sns.set_theme(style="whitegrid")
-
-# --- LOAD DATA ---
+import pandas as pd 
 try:
     items = pd.read_csv('data/olist_order_items_dataset.csv')
     products = pd.read_csv('data/olist_products_dataset.csv')
     payments = pd.read_csv('data/olist_order_payments_dataset.csv')
+    
+    if items.empty or products.empty or payments.empty:
+        raise ValueError("One or more datasets are empty. Check the content of the CSV files.")
+    
     print("Datasets loaded successfully.")
 except FileNotFoundError:
     print("Error: CSV files not found. Check your 'data' folder location.")
-
+except ValueError as e:
+    print(e)
 ```
 #  dataset head , shape, missing value 
 
@@ -34,55 +32,67 @@ items.head()
 
 ```
 ```{python}
-print('Dataset has',items.shape[0],'rows and',items.shape[1],'columns') 
-print('Check missing value \n',items.isna().sum())
-```
-```{python}
 #order_ payment
 payments.head()
-```
-```{python}
-#order_ payment
-print('Dataset has',payments.shape[0],'rows and',payments.shape[1],'columns') 
-print('check missing value:\n',payments.isna().sum()) 
 ```
 ```{python}
 #product
 products.head()
 ```
 ```{python}
-#product
-
-print('Dataset has',products.shape[0],'rows and',products.shape[1],'columns') 
-print('check missing value:\n',products.isna().sum())
+for name, df in {'Items': items, 'Products': products, 'Payments': payments}.items():
+    print(f"{name} Dataset: {df.shape[0]} rows, {df.shape[1]} columns")
+    print(f"Missing values in {name} dataset:\n{df.isna().sum()}\n")
 ```
 
 #  CLEAN 
 ```{python}
 # --- MERGE & CLEAN ---
 ## 1. Filter for valid paid orders
-valid_orders = payments['order_id'].unique()
-items = items[items['order_id'].isin(valid_orders)]
-items.head()
+if 'order_id' in payments.columns and 'order_id' in items.columns:
+    valid_orders = payments['order_id'].unique()
+    original_rows = items.shape[0]
+    items = items[items['order_id'].isin(valid_orders)]
+    print(f"Filtered valid orders. Rows reduced from {original_rows} to {items.shape[0]}.")
+else:
+    print("Error: 'order_id' column missing in one of the datasets.")
 ```
 ```{python}
 # 2. Merge Items with Products (Link Price to Weight)
-df = pd.merge(items, products, on='product_id', how='inner')
-df.head()
+if 'product_id' in items.columns and 'product_id' in products.columns:
+    df = pd.merge(items, products, on='product_id', how='inner')
+    print(f"Merged dataset created with {df.shape[0]} rows and {df.shape[1]} columns.")
+else:
+    print("Error: 'product_id' column missing in one of the datasets.")
 ```
 ```{python}
 # 3. Drop Errors (Missing values or 0s)
+before_cleaning = df.shape[0]
 df = df.dropna(subset=['product_category_name', 'product_weight_g', 'price'])
 df = df[(df['product_weight_g'] > 0) & (df['price'] > 0)]
-df.head()
+print(f"Cleaned dataset. Rows reduced from {before_cleaning} to {df.shape[0]}.")
 ```
 ```{python}
 # 4. Outlier Handling
 # We cap items at 30kg. Items heavier than this usually require special freight 
 # logic, so we exclude them to focus on standard warehouse capacity.
 df_clean = df[df['product_weight_g'] <= 30000].copy()
-df_clean.head()
-
-print(f"Original Rows: {len(items)}")
+print(f"Original Rows: {len(df)}")
 print(f"Cleaned Rows:  {len(df_clean)}")
+```
+
+
+```{python}
+# Aggregate
+lp_data = df_clean.groupby('product_category_name').agg({
+    'price': 'mean', # Pi: average revenue
+    'product_weight_g': 'mean', # wi : average  weight
+    'order_item_id': 'count' # Di : total historical Demand
+}).reset_index()
+# rename columns
+lp_data.columns = ['Category', 'P_i', 'W_i', 'D_i']
+lp_data.to_csv('data/lp_parameters.csv', index=False)
+with open('data/capacity.txt', 'w') as f:
+    f.write(str(df_clean['product_weight_g'].sum()))
+print("Success! Created 'data/lp_parameters.csv' and 'data/capacity.txt'")
 ```

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Strategic Product Prioritization – olist_quarto</title>
+<title>Product Prioritization – olist_quarto</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -40,7 +40,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-e31584831b205ffbb2d98406f31c2a5b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-ffa9a6279353761231ec249df0a7fdd3.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -125,16 +125,22 @@ window.Quarto = {
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./about.html"> 
-<span class="menu-text">About team</span></a>
-  </li>  
-  <li class="nav-item">
     <a class="nav-link" href="./data.html"> 
 <span class="menu-text">Data</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="./model.html"> 
 <span class="menu-text">Model</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./result.html"> 
+<span class="menu-text">Results</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./about.html"> 
+<span class="menu-text">About team</span></a>
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
@@ -155,6 +161,7 @@ window.Quarto = {
   <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">1. Introduction</a></li>
   <li><a href="#methodology" id="toc-methodology" class="nav-link" data-scroll-target="#methodology">2. Methodology</a></li>
   <li><a href="#data-overview" id="toc-data-overview" class="nav-link" data-scroll-target="#data-overview">3. Data Overview</a></li>
+  <li><a href="#data-source-mapping" id="toc-data-source-mapping" class="nav-link" data-scroll-target="#data-source-mapping">4. Data Source Mapping</a></li>
   <li><a href="#mathematical-formulation" id="toc-mathematical-formulation" class="nav-link" data-scroll-target="#mathematical-formulation">5. Mathematical Formulation</a></li>
   </ul>
 </nav>
@@ -164,7 +171,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Strategic Product Prioritization</h1>
+<h1 class="title">Product Prioritization</h1>
 <p class="subtitle lead">Maximizing Revenue via Linear Programming</p>
 </div>
 
@@ -254,8 +261,12 @@ window.Quarto = {
 <li><code>payment_sequential</code>: Sequence of payments.</li>
 <li><code>payment_type</code>: Method of payment (credit card, voucher, boleto, debit card).</li>
 <li><code>payment_installments</code>: Number of installments chosen by the customer.</li>
-<li><code>payment_value</code>: Transaction value. # 4. Data Source Mapping</li>
+<li><code>payment_value</code>: Transaction value.</li>
 </ul>
+</section>
+</section>
+<section id="data-source-mapping" class="level1">
+<h1>4. Data Source Mapping</h1>
 <p>We formulated the problem using the following variables mapped from the Olist dataset:</p>
 <table class="caption-top table">
 <colgroup>
@@ -294,7 +305,6 @@ window.Quarto = {
 </tbody>
 </table>
 </section>
-</section>
 <section id="mathematical-formulation" class="level1">
 <h1>5. Mathematical Formulation</h1>
 <p>We model this problem as a <strong>Resource Allocation Problem</strong> (specifically, a variant of the <em>Knapsack Problem</em>).</p>
@@ -307,7 +317,13 @@ window.Quarto = {
 </section>
 <section id="parameters-data-inputs" class="level3">
 <h3 class="anchored" data-anchor-id="parameters-data-inputs">Parameters (Data Inputs)</h3>
-<p>These values were calculated in the Data Analysis phase: * <span class="math inline">\(P_i\)</span>: <strong>Average Price</strong> (Revenue) per unit of category <span class="math inline">\(i\)</span>. * <span class="math inline">\(W_i\)</span>: <strong>Average Weight</strong> (Capacity Cost) per unit of category <span class="math inline">\(i\)</span>. * <span class="math inline">\(D_i\)</span>: <strong>Maximum Demand</strong> (Historical sales count) for category <span class="math inline">\(i\)</span>. * <span class="math inline">\(K\)</span>: <strong>Total System Capacity</strong> (Total weight limit).</p>
+<p>These values were calculated in the Data Analysis phase:</p>
+<ul>
+<li><span class="math inline">\(P_i\)</span>: <strong>Average Price</strong> (Revenue) per unit of category <span class="math inline">\(i\)</span>.</li>
+<li><span class="math inline">\(W_i\)</span>: <strong>Average Weight</strong> (Capacity Cost) per unit of category <span class="math inline">\(i\)</span>.</li>
+<li><span class="math inline">\(D_i\)</span>: <strong>Maximum Demand</strong> (Historical sales count) for category <span class="math inline">\(i\)</span>.</li>
+<li><span class="math inline">\(K\)</span>: <strong>Total System Capacity</strong> (Total weight limit).</li>
+</ul>
 </section>
 <section id="decision-variables" class="level3">
 <h3 class="anchored" data-anchor-id="decision-variables">Decision Variables</h3>

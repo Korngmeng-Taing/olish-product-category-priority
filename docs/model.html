@@ -20,6 +20,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -96,16 +131,22 @@ ul.task-list li input[type="checkbox"] {
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./about.html"> 
-<span class="menu-text">About team</span></a>
-  </li>  
-  <li class="nav-item">
     <a class="nav-link" href="./data.html"> 
 <span class="menu-text">Data</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link active" href="./model.html" aria-current="page"> 
 <span class="menu-text">Model</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./result.html"> 
+<span class="menu-text">Results</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./about.html"> 
+<span class="menu-text">About team</span></a>
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
@@ -124,6 +165,9 @@ ul.task-list li input[type="checkbox"] {
    
   <ul>
   <li><a href="#python-implementation-pulp" id="toc-python-implementation-pulp" class="nav-link active" data-scroll-target="#python-implementation-pulp">1. Python Implementation (PuLP)</a></li>
+  <li><a href="#initial-model" id="toc-initial-model" class="nav-link" data-scroll-target="#initial-model">Initial Model</a></li>
+  <li><a href="#solving" id="toc-solving" class="nav-link" data-scroll-target="#solving">Solving</a></li>
+  <li><a href="#result" id="toc-result" class="nav-link" data-scroll-target="#result">Result</a></li>
   </ul>
 </nav>
     </div>
@@ -151,6 +195,182 @@ ul.task-list li input[type="checkbox"] {
 
 <section id="python-implementation-pulp" class="level1">
 <h1>1. Python Implementation (PuLP)</h1>
+<div id="1805eabf" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pulp</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># --- STEP 1: LOAD DATA ---</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Load the parameters table (Pi, Wi, Di)</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    lp_data <span class="op">=</span> pd.read_csv(<span class="st">'data/lp_parameters.csv'</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> lp_data.empty:</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="st">"Error: 'lp_parameters.csv' is empty."</span>)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Load the scalar capacity value (K)</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> <span class="bu">open</span>(<span class="st">'data/capacity.txt'</span>, <span class="st">'r'</span>) <span class="im">as</span> f:</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>        original_K <span class="op">=</span> <span class="bu">float</span>(f.read())</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># --- THE FIX: INTRODUCE SCARCITY ---</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># We reduce capacity to 75% of the historical volume. </span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># This creates a "Limited Handling Capacity" as required by the problem.</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    K <span class="op">=</span> original_K <span class="op">*</span> <span class="fl">0.75</span> </span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Data Loaded Successfully."</span>)</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Categories to Optimize: </span><span class="sc">{</span><span class="bu">len</span>(lp_data)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Original Historical Weight: </span><span class="sc">{</span>original_K<span class="sc">:,.0f}</span><span class="ss"> g"</span>)</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Simulated Capacity Limit (75%): </span><span class="sc">{</span>K<span class="sc">:,.0f}</span><span class="ss"> g"</span>)</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> <span class="pp">FileNotFoundError</span>:</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Error: Input files not found. Please run '01_data.qmd' first."</span>)</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> <span class="pp">ValueError</span> <span class="im">as</span> e:</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(e)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Data Loaded Successfully.
+Categories to Optimize: 73
+Original Historical Weight: 233,070,066 g
+Simulated Capacity Limit (75%): 174,802,550 g</code></pre>
+</div>
+</div>
+</section>
+<section id="initial-model" class="level1">
+<h1>Initial Model</h1>
+<div id="c915ec2e" class="cell" data-execution_count="2">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="st">'Category'</span> <span class="kw">in</span> lp_data.columns:</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    categories <span class="op">=</span> lp_data[<span class="st">'Category'</span>].tolist()</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">raise</span> <span class="pp">KeyError</span>(<span class="st">"Error: 'Category' column missing."</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Initialize Model (Maximization)</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> pulp.LpProblem(<span class="st">"Olist_Revenue_Optimization"</span>, pulp.LpMaximize)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Define Decision Variables</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> pulp.LpVariable.dicts(<span class="st">"Qty"</span>, categories, lowBound<span class="op">=</span><span class="dv">0</span>, cat<span class="op">=</span><span class="st">'Integer'</span>)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Objective Function: Maximize Total Revenue (Price * Quantity)</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>model <span class="op">+=</span> pulp.lpSum([lp_data.loc[i, <span class="st">'P_i'</span>] <span class="op">*</span> x[cat] </span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>                     <span class="cf">for</span> i, cat <span class="kw">in</span> <span class="bu">enumerate</span>(categories)])</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Add Capacity Constraint: Total Weight handled must be &lt;= K</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>model <span class="op">+=</span> pulp.lpSum([lp_data.loc[i, <span class="st">'W_i'</span>] <span class="op">*</span> x[cat] </span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>                     <span class="cf">for</span> i, cat <span class="kw">in</span> <span class="bu">enumerate</span>(categories)]) <span class="op">&lt;=</span> K</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. Add Demand Constraints: Quantity handled &lt;= Market Demand</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, cat <span class="kw">in</span> <span class="bu">enumerate</span>(categories):</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    model <span class="op">+=</span> x[cat] <span class="op">&lt;=</span> lp_data.loc[i, <span class="st">'D_i'</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+</div>
+</section>
+<section id="solving" class="level1">
+<h1>Solving</h1>
+<div id="6fb99835" class="cell" data-execution_count="3">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Solve using the CBC solver</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>model.solve(pulp.PULP_CBC_CMD(msg<span class="op">=</span><span class="dv">0</span>))</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Check the status</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>status <span class="op">=</span> pulp.LpStatus[model.status]</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Optimization Status: </span><span class="sc">{</span>status<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Optimization Status: Optimal</code></pre>
+</div>
+</div>
+</section>
+<section id="result" class="level1">
+<h1>Result</h1>
+<div id="aafb8f39" class="cell" data-execution_count="4">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> status <span class="op">==</span> <span class="st">'Optimal'</span>:</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    results <span class="op">=</span> []</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i, cat <span class="kw">in</span> <span class="bu">enumerate</span>(categories):</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>        optimized_qty <span class="op">=</span> x[cat].varValue</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>        demand <span class="op">=</span> lp_data.loc[i, <span class="st">'D_i'</span>]</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Determine Status logic</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> optimized_qty <span class="op">&gt;=</span> demand:</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>            res_status <span class="op">=</span> <span class="st">'Full Demand Met'</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">elif</span> optimized_qty <span class="op">&gt;</span> <span class="dv">0</span>:</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>            res_status <span class="op">=</span> <span class="st">'Prioritized (Partial)'</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>            res_status <span class="op">=</span> <span class="st">'Deprioritized (Cut)'</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>        results.append({</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>            <span class="st">'Category'</span>: cat,</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>            <span class="st">'Price_Unit'</span>: lp_data.loc[i, <span class="st">'P_i'</span>],</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>            <span class="st">'Weight_Unit'</span>: lp_data.loc[i, <span class="st">'W_i'</span>],</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>            <span class="st">'Original_Demand'</span>: demand,</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>            <span class="st">'Optimized_Qty'</span>: optimized_qty,</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>            <span class="st">'Status'</span>: res_status</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>        })</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>    results_df <span class="op">=</span> pd.DataFrame(results)</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Sort results to show which items were "Reduced/Cut" at the bottom</span></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>    results_df <span class="op">=</span> results_df.sort_values(by<span class="op">=</span><span class="st">"Optimized_Qty"</span>, ascending<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Save results</span></span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>    results_df.to_csv(<span class="st">'data/results.csv'</span>, index<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Results saved to 'data/results.csv'"</span>)</span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Display top and bottom to see the "Optimization" in action</span></span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">--- Top Categories (Prioritized) ---"</span>)</span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(results_df.head(<span class="dv">10</span>)[[<span class="st">'Category'</span>, <span class="st">'Original_Demand'</span>, <span class="st">'Optimized_Qty'</span>, <span class="st">'Status'</span>]])</span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">--- Bottom Categories (Reduced due to capacity) ---"</span>)</span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(results_df.tail(<span class="dv">10</span>)[[<span class="st">'Category'</span>, <span class="st">'Original_Demand'</span>, <span class="st">'Optimized_Qty'</span>, <span class="st">'Status'</span>]])</span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"No feasible solution found."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Results saved to 'data/results.csv'
+
+--- Top Categories (Prioritized) ---
+                  Category  Original_Demand  Optimized_Qty           Status
+13         cama_mesa_banho            11104        11104.0  Full Demand Met
+11            beleza_saude             9667         9667.0  Full Demand Met
+32           esporte_lazer             8641         8641.0  Full Demand Met
+54        moveis_decoracao             8334         8334.0  Full Demand Met
+44  informatica_acessorios             7827         7827.0  Full Demand Met
+66      relogios_presentes             5991         5991.0  Full Demand Met
+70               telefonia             4545         4545.0  Full Demand Met
+40      ferramentas_jardim             4347         4347.0  Full Demand Met
+8               automotivo             4235         4235.0  Full Demand Met
+12              brinquedos             4117         4117.0  Full Demand Met
+
+--- Bottom Categories (Reduced due to capacity) ---
+                                          Category  Original_Demand  \
+68                         sinalizacao_e_seguranca              199   
+67                              seguros_e_servicos                2   
+56                                   moveis_quarto              109   
+55                               moveis_escritorio             1691   
+53  moveis_cozinha_area_de_servico_jantar_e_jardim              281   
+52                       moveis_colchao_e_estofado               38   
+50                                malas_acessorios             1092   
+41                                          flores               33   
+43                   industria_comercio_e_negocios              268   
+57                                     moveis_sala              503   
+
+    Optimized_Qty                 Status  
+68            3.0  Prioritized (Partial)  
+67            2.0        Full Demand Met  
+56            0.0    Deprioritized (Cut)  
+55            0.0    Deprioritized (Cut)  
+53            0.0    Deprioritized (Cut)  
+52            0.0    Deprioritized (Cut)  
+50            0.0    Deprioritized (Cut)  
+41            0.0    Deprioritized (Cut)  
+43            0.0    Deprioritized (Cut)  
+57            0.0    Deprioritized (Cut)  </code></pre>
+</div>
+</div>
 
 
 </section>
