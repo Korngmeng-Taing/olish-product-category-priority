@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Mathematical Optimization Model – olist_quarto</title>
+<title>2. Mathematical Optimization Model (PuLP) – olist_quarto</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -145,7 +145,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./about.html"> 
+    <a class="nav-link" href="./about.qmd"> 
 <span class="menu-text">About team</span></a>
   </li>  
 </ul>
@@ -164,10 +164,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#python-implementation-pulp" id="toc-python-implementation-pulp" class="nav-link active" data-scroll-target="#python-implementation-pulp">1. Python Implementation (PuLP)</a></li>
-  <li><a href="#initial-model" id="toc-initial-model" class="nav-link" data-scroll-target="#initial-model">Initial Model</a></li>
-  <li><a href="#solving" id="toc-solving" class="nav-link" data-scroll-target="#solving">Solving</a></li>
-  <li><a href="#result" id="toc-result" class="nav-link" data-scroll-target="#result">Result</a></li>
+  <li><a href="#define-model" id="toc-define-model" class="nav-link active" data-scroll-target="#define-model">Define Model</a></li>
+  <li><a href="#solve" id="toc-solve" class="nav-link" data-scroll-target="#solve">Solve</a></li>
+  <li><a href="#process-save-results" id="toc-process-save-results" class="nav-link" data-scroll-target="#process-save-results">Process &amp; Save Results</a></li>
   </ul>
 </nav>
     </div>
@@ -176,7 +175,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Mathematical Optimization Model</h1>
+<h1 class="title">2. Mathematical Optimization Model (PuLP)</h1>
 </div>
 
 
@@ -193,10 +192,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="python-implementation-pulp" class="level1">
-<h1>1. Python Implementation (PuLP)</h1>
-<div id="1805eabf" class="cell" data-execution_count="1">
-<details class="code-fold">
+<div id="cell-2" class="cell" data-execution_count="1">
+<details open="" class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pulp</span>
@@ -204,12 +201,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># --- STEP 1: LOAD DATA ---</span></span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Load the parameters table (Pi, Wi, Di)</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    lp_data <span class="op">=</span> pd.read_csv(<span class="st">'data/lp_parameters.csv'</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    lp_data <span class="op">=</span> pd.read_csv(<span class="st">'Data/lp_parameters.csv'</span>)</span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> lp_data.empty:</span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="st">"Error: 'lp_parameters.csv' is empty."</span>)</span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Load the scalar capacity value (K)</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> <span class="bu">open</span>(<span class="st">'data/capacity.txt'</span>, <span class="st">'r'</span>) <span class="im">as</span> f:</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> <span class="bu">open</span>(<span class="st">'Data/capacity.txt'</span>, <span class="st">'r'</span>) <span class="im">as</span> f:</span>
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>        original_K <span class="op">=</span> <span class="bu">float</span>(f.read())</span>
 <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>        </span>
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># --- THE FIX: INTRODUCE SCARCITY ---</span></span>
@@ -223,7 +220,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Simulated Capacity Limit (75%): </span><span class="sc">{</span>K<span class="sc">:,.0f}</span><span class="ss"> g"</span>)</span>
 <span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> <span class="pp">FileNotFoundError</span>:</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Error: Input files not found. Please run '01_data.qmd' first."</span>)</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Error: Input files not found. Please run '01_data_preparation.ipynb' first."</span>)</span>
 <span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> <span class="pp">ValueError</span> <span class="im">as</span> e:</span>
 <span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(e)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
@@ -234,11 +231,10 @@ Original Historical Weight: 233,070,066 g
 Simulated Capacity Limit (75%): 174,802,550 g</code></pre>
 </div>
 </div>
-</section>
-<section id="initial-model" class="level1">
-<h1>Initial Model</h1>
-<div id="c915ec2e" class="cell" data-execution_count="2">
-<details class="code-fold">
+<section id="define-model" class="level1">
+<h1>Define Model</h1>
+<div id="cell-4" class="cell" data-execution_count="2">
+<details open="" class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="st">'Category'</span> <span class="kw">in</span> lp_data.columns:</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    categories <span class="op">=</span> lp_data[<span class="st">'Category'</span>].tolist()</span>
@@ -265,10 +261,10 @@ Simulated Capacity Limit (75%): 174,802,550 g</code></pre>
 </details>
 </div>
 </section>
-<section id="solving" class="level1">
-<h1>Solving</h1>
-<div id="6fb99835" class="cell" data-execution_count="3">
-<details class="code-fold">
+<section id="solve" class="level1">
+<h1>Solve</h1>
+<div id="cell-6" class="cell" data-execution_count="3">
+<details open="" class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Solve using the CBC solver</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>model.solve(pulp.PULP_CBC_CMD(msg<span class="op">=</span><span class="dv">0</span>))</span>
@@ -282,10 +278,10 @@ Simulated Capacity Limit (75%): 174,802,550 g</code></pre>
 </div>
 </div>
 </section>
-<section id="result" class="level1">
-<h1>Result</h1>
-<div id="aafb8f39" class="cell" data-execution_count="4">
-<details class="code-fold">
+<section id="process-save-results" class="level1">
+<h1>Process &amp; Save Results</h1>
+<div id="cell-8" class="cell" data-execution_count="4">
+<details open="" class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> status <span class="op">==</span> <span class="st">'Optimal'</span>:</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    results <span class="op">=</span> []</span>
@@ -317,7 +313,7 @@ Simulated Capacity Limit (75%): 174,802,550 g</code></pre>
 <span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>    results_df <span class="op">=</span> results_df.sort_values(by<span class="op">=</span><span class="st">"Optimized_Qty"</span>, ascending<span class="op">=</span><span class="va">False</span>)</span>
 <span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Save results</span></span>
-<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>    results_df.to_csv(<span class="st">'data/results.csv'</span>, index<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>    results_df.to_csv(<span class="st">'Data/results.csv'</span>, index<span class="op">=</span><span class="va">False</span>)</span>
 <span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Results saved to 'data/results.csv'"</span>)</span>
 <span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Display top and bottom to see the "Optimization" in action</span></span>

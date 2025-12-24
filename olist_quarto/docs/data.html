@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Data Analysis &amp; Preparation – olist_quarto</title>
+<title>1. Data Analysis &amp; Preparation – olist_quarto</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -58,7 +58,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </style>
 
 
-<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="site_libs/quarto-nav/headroom.min.js"></script>
 <script src="site_libs/clipboard/clipboard.min.js"></script>
 <script src="site_libs/quarto-search/autocomplete.umd.js"></script>
@@ -103,9 +103,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
-<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
-
-<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 
 
 </head>
@@ -148,7 +145,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./about.html"> 
+    <a class="nav-link" href="./about.qmd"> 
 <span class="menu-text">About team</span></a>
   </li>  
 </ul>
@@ -167,9 +164,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#load-data" id="toc-load-data" class="nav-link active" data-scroll-target="#load-data">load Data</a></li>
-  <li><a href="#dataset-head-shape-missing-value" id="toc-dataset-head-shape-missing-value" class="nav-link" data-scroll-target="#dataset-head-shape-missing-value">dataset head , shape, missing value</a></li>
-  <li><a href="#clean" id="toc-clean" class="nav-link" data-scroll-target="#clean">CLEAN</a></li>
+  <li><a href="#dataset-overview" id="toc-dataset-overview" class="nav-link active" data-scroll-target="#dataset-overview">Dataset Overview</a></li>
+  <li><a href="#clean-merge" id="toc-clean-merge" class="nav-link" data-scroll-target="#clean-merge">Clean &amp; Merge</a></li>
+  <li><a href="#aggregate-save-parameters" id="toc-aggregate-save-parameters" class="nav-link" data-scroll-target="#aggregate-save-parameters">Aggregate &amp; Save Parameters</a></li>
   </ul>
 </nav>
     </div>
@@ -178,7 +175,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Data Analysis &amp; Preparation</h1>
+<h1 class="title">1. Data Analysis &amp; Preparation</h1>
 </div>
 
 
@@ -195,280 +192,41 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="load-data" class="level1">
-<h1>load Data</h1>
 <p>We begin by loading the raw datasets and merging them to create a unified view of “Sales vs.&nbsp;Logistics Cost”.</p>
-<div id="c3f4b24e" class="cell" data-execution_count="1">
-<details class="code-fold">
+<div id="cell-2" class="cell" data-execution_count="1">
+<details open="" class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd </span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    items <span class="op">=</span> pd.read_csv(<span class="st">'data/olist_order_items_dataset.csv'</span>)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    products <span class="op">=</span> pd.read_csv(<span class="st">'data/olist_products_dataset.csv'</span>)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    payments <span class="op">=</span> pd.read_csv(<span class="st">'data/olist_order_payments_dataset.csv'</span>)</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> items.empty <span class="kw">or</span> products.empty <span class="kw">or</span> payments.empty:</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="st">"One or more datasets are empty. Check the content of the CSV files."</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># The ".." means go up one level to the main folder</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    items <span class="op">=</span> pd.read_csv(<span class="st">'Data/olist_order_items_dataset.csv'</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    products <span class="op">=</span> pd.read_csv(<span class="st">'Data/olist_products_dataset.csv'</span>)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    payments <span class="op">=</span> pd.read_csv(<span class="st">'Data/olist_order_payments_dataset.csv'</span>)</span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Datasets loaded successfully."</span>)</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> <span class="pp">FileNotFoundError</span>:</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Error: CSV files not found. Check your 'data' folder location."</span>)</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> <span class="pp">ValueError</span> <span class="im">as</span> e:</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(e)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> items.empty <span class="kw">or</span> products.empty <span class="kw">or</span> payments.empty:</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="st">"One or more datasets are empty. Check the content of the CSV files."</span>)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Datasets loaded successfully."</span>)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> <span class="pp">FileNotFoundError</span>:</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Error: CSV files not found. Check your 'data' folder location."</span>)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> <span class="pp">ValueError</span> <span class="im">as</span> e:</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(e)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Datasets loaded successfully.</code></pre>
 </div>
 </div>
-</section>
-<section id="dataset-head-shape-missing-value" class="level1">
-<h1>dataset head , shape, missing value</h1>
-<div id="91c070ea" class="cell" data-execution_count="2">
-<details class="code-fold">
+<section id="dataset-overview" class="level1">
+<h1>Dataset Overview</h1>
+<div id="cell-4" class="cell" data-execution_count="2">
+<details open="" class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#order_ item</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>items.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-<div class="cell-output cell-output-display" data-execution_count="2">
-<div>
-
-
-<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th">order_id</th>
-<th data-quarto-table-cell-role="th">order_item_id</th>
-<th data-quarto-table-cell-role="th">product_id</th>
-<th data-quarto-table-cell-role="th">seller_id</th>
-<th data-quarto-table-cell-role="th">shipping_limit_date</th>
-<th data-quarto-table-cell-role="th">price</th>
-<th data-quarto-table-cell-role="th">freight_value</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">0</th>
-<td>00010242fe8c5a6d1ba2dd792cb16214</td>
-<td>1</td>
-<td>4244733e06e7ecb4970a6e2683c13e61</td>
-<td>48436dade18ac8b2bce089ec2a041202</td>
-<td>2017-09-19 09:45:35</td>
-<td>58.90</td>
-<td>13.29</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">1</th>
-<td>00018f77f2f0320c557190d7a144bdd3</td>
-<td>1</td>
-<td>e5f2d52b802189ee658865ca93d83a8f</td>
-<td>dd7ddc04e1b6c2c614352b383efe2d36</td>
-<td>2017-05-03 11:05:13</td>
-<td>239.90</td>
-<td>19.93</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">2</th>
-<td>000229ec398224ef6ca0657da4fc703e</td>
-<td>1</td>
-<td>c777355d18b72b67abbeef9df44fd0fd</td>
-<td>5b51032eddd242adc84c38acab88f23d</td>
-<td>2018-01-18 14:48:30</td>
-<td>199.00</td>
-<td>17.87</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">3</th>
-<td>00024acbcdf0a6daa1e931b038114c75</td>
-<td>1</td>
-<td>7634da152a4610f1595efa32f14722fc</td>
-<td>9d7a1d34a5052409006425275ba1c2b4</td>
-<td>2018-08-15 10:10:18</td>
-<td>12.99</td>
-<td>12.79</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">4</th>
-<td>00042b26cf59d7ce69dfabb4e55b4fd9</td>
-<td>1</td>
-<td>ac6c3623068f30de03045865e4e10089</td>
-<td>df560393f3a51e74553ab94004ba5c87</td>
-<td>2017-02-13 13:57:51</td>
-<td>199.90</td>
-<td>18.14</td>
-</tr>
-</tbody>
-</table>
-
-</div>
-</div>
-</div>
-<div id="0f75c69f" class="cell" data-execution_count="3">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">#order_ payment</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>payments.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-<div class="cell-output cell-output-display" data-execution_count="3">
-<div>
-
-
-<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th">order_id</th>
-<th data-quarto-table-cell-role="th">payment_sequential</th>
-<th data-quarto-table-cell-role="th">payment_type</th>
-<th data-quarto-table-cell-role="th">payment_installments</th>
-<th data-quarto-table-cell-role="th">payment_value</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">0</th>
-<td>b81ef226f3fe1789b1e8b2acac839d17</td>
-<td>1</td>
-<td>credit_card</td>
-<td>8</td>
-<td>99.33</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">1</th>
-<td>a9810da82917af2d9aefd1278f1dcfa0</td>
-<td>1</td>
-<td>credit_card</td>
-<td>1</td>
-<td>24.39</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">2</th>
-<td>25e8ea4e93396b6fa0d3dd708e76c1bd</td>
-<td>1</td>
-<td>credit_card</td>
-<td>1</td>
-<td>65.71</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">3</th>
-<td>ba78997921bbcdc1373bb41e913ab953</td>
-<td>1</td>
-<td>credit_card</td>
-<td>8</td>
-<td>107.78</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">4</th>
-<td>42fdf880ba16b47b59251dd489d4441a</td>
-<td>1</td>
-<td>credit_card</td>
-<td>2</td>
-<td>128.45</td>
-</tr>
-</tbody>
-</table>
-
-</div>
-</div>
-</div>
-<div id="b36999d4" class="cell" data-execution_count="4">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">#product</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>products.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-<div class="cell-output cell-output-display" data-execution_count="4">
-<div>
-
-
-<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th">product_id</th>
-<th data-quarto-table-cell-role="th">product_category_name</th>
-<th data-quarto-table-cell-role="th">product_name_lenght</th>
-<th data-quarto-table-cell-role="th">product_description_lenght</th>
-<th data-quarto-table-cell-role="th">product_photos_qty</th>
-<th data-quarto-table-cell-role="th">product_weight_g</th>
-<th data-quarto-table-cell-role="th">product_length_cm</th>
-<th data-quarto-table-cell-role="th">product_height_cm</th>
-<th data-quarto-table-cell-role="th">product_width_cm</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">0</th>
-<td>1e9e8ef04dbcff4541ed26657ea517e5</td>
-<td>perfumaria</td>
-<td>40.0</td>
-<td>287.0</td>
-<td>1.0</td>
-<td>225.0</td>
-<td>16.0</td>
-<td>10.0</td>
-<td>14.0</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">1</th>
-<td>3aa071139cb16b67ca9e5dea641aaa2f</td>
-<td>artes</td>
-<td>44.0</td>
-<td>276.0</td>
-<td>1.0</td>
-<td>1000.0</td>
-<td>30.0</td>
-<td>18.0</td>
-<td>20.0</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">2</th>
-<td>96bd76ec8810374ed1b65e291975717f</td>
-<td>esporte_lazer</td>
-<td>46.0</td>
-<td>250.0</td>
-<td>1.0</td>
-<td>154.0</td>
-<td>18.0</td>
-<td>9.0</td>
-<td>15.0</td>
-</tr>
-<tr class="even">
-<th data-quarto-table-cell-role="th">3</th>
-<td>cef67bcfe19066a932b7673e239eb23d</td>
-<td>bebes</td>
-<td>27.0</td>
-<td>261.0</td>
-<td>1.0</td>
-<td>371.0</td>
-<td>26.0</td>
-<td>4.0</td>
-<td>26.0</td>
-</tr>
-<tr class="odd">
-<th data-quarto-table-cell-role="th">4</th>
-<td>9dc1a7de274444849c219cff195d0b71</td>
-<td>utilidades_domesticas</td>
-<td>37.0</td>
-<td>402.0</td>
-<td>4.0</td>
-<td>625.0</td>
-<td>20.0</td>
-<td>17.0</td>
-<td>13.0</td>
-</tr>
-</tbody>
-</table>
-
-</div>
-</div>
-</div>
-<div id="a3b502e4" class="cell" data-execution_count="5">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> name, df <span class="kw">in</span> {<span class="st">'Items'</span>: items, <span class="st">'Products'</span>: products, <span class="st">'Payments'</span>: payments}.items():</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>name<span class="sc">}</span><span class="ss"> Dataset: </span><span class="sc">{</span>df<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">}</span><span class="ss"> rows, </span><span class="sc">{</span>df<span class="sc">.</span>shape[<span class="dv">1</span>]<span class="sc">}</span><span class="ss"> columns"</span>)</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Missing values in </span><span class="sc">{</span>name<span class="sc">}</span><span class="ss"> dataset:</span><span class="ch">\n</span><span class="sc">{</span>df<span class="sc">.</span>isna()<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">}</span><span class="ch">\n</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check shapes and missing values</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> name, df <span class="kw">in</span> {<span class="st">'Items'</span>: items, <span class="st">'Products'</span>: products, <span class="st">'Payments'</span>: payments}.items():</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>name<span class="sc">}</span><span class="ss"> Dataset: </span><span class="sc">{</span>df<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">}</span><span class="ss"> rows, </span><span class="sc">{</span>df<span class="sc">.</span>shape[<span class="dv">1</span>]<span class="sc">}</span><span class="ss"> columns"</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Missing values in </span><span class="sc">{</span>name<span class="sc">}</span><span class="ss"> dataset:</span><span class="ch">\n</span><span class="sc">{</span>df<span class="sc">.</span>isna()<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">}</span><span class="ch">\n</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Items Dataset: 112650 rows, 7 columns
@@ -507,82 +265,73 @@ dtype: int64
 </div>
 </div>
 </section>
-<section id="clean" class="level1">
-<h1>CLEAN</h1>
-<div id="ab52ceab" class="cell" data-execution_count="6">
-<details class="code-fold">
+<section id="clean-merge" class="level1">
+<h1>Clean &amp; Merge</h1>
+<div id="cell-6" class="cell" data-execution_count="3">
+<details open="" class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># --- MERGE &amp; CLEAN ---</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co">## 1. Filter for valid paid orders</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="st">'order_id'</span> <span class="kw">in</span> payments.columns <span class="kw">and</span> <span class="st">'order_id'</span> <span class="kw">in</span> items.columns:</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    valid_orders <span class="op">=</span> payments[<span class="st">'order_id'</span>].unique()</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    original_rows <span class="op">=</span> items.shape[<span class="dv">0</span>]</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    items <span class="op">=</span> items[items[<span class="st">'order_id'</span>].isin(valid_orders)]</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Filtered valid orders. Rows reduced from </span><span class="sc">{</span>original_rows<span class="sc">}</span><span class="ss"> to </span><span class="sc">{</span>items<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">}</span><span class="ss">."</span>)</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Error: 'order_id' column missing in one of the datasets."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># --- MERGE &amp; CLEAN ---</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co">## 1. Filter for valid paid orders</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="st">'order_id'</span> <span class="kw">in</span> payments.columns <span class="kw">and</span> <span class="st">'order_id'</span> <span class="kw">in</span> items.columns:</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    valid_orders <span class="op">=</span> payments[<span class="st">'order_id'</span>].unique()</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    original_rows <span class="op">=</span> items.shape[<span class="dv">0</span>]</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    items <span class="op">=</span> items[items[<span class="st">'order_id'</span>].isin(valid_orders)]</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Filtered valid orders. Rows reduced from </span><span class="sc">{</span>original_rows<span class="sc">}</span><span class="ss"> to </span><span class="sc">{</span>items<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">}</span><span class="ss">."</span>)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Error: 'order_id' column missing in one of the datasets."</span>)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Merge Items with Products (Link Price to Weight)</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="st">'product_id'</span> <span class="kw">in</span> items.columns <span class="kw">and</span> <span class="st">'product_id'</span> <span class="kw">in</span> products.columns:</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> pd.merge(items, products, on<span class="op">=</span><span class="st">'product_id'</span>, how<span class="op">=</span><span class="st">'inner'</span>)</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Merged dataset created with </span><span class="sc">{</span>df<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">}</span><span class="ss"> rows and </span><span class="sc">{</span>df<span class="sc">.</span>shape[<span class="dv">1</span>]<span class="sc">}</span><span class="ss"> columns."</span>)</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Error: 'product_id' column missing in one of the datasets."</span>)</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Drop Errors (Missing values or 0s)</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>before_cleaning <span class="op">=</span> df.shape[<span class="dv">0</span>]</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df.dropna(subset<span class="op">=</span>[<span class="st">'product_category_name'</span>, <span class="st">'product_weight_g'</span>, <span class="st">'price'</span>])</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df[(df[<span class="st">'product_weight_g'</span>] <span class="op">&gt;</span> <span class="dv">0</span>) <span class="op">&amp;</span> (df[<span class="st">'price'</span>] <span class="op">&gt;</span> <span class="dv">0</span>)]</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Cleaned dataset. Rows reduced from </span><span class="sc">{</span>before_cleaning<span class="sc">}</span><span class="ss"> to </span><span class="sc">{</span>df<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">}</span><span class="ss">."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>Filtered valid orders. Rows reduced from 112650 to 112647.</code></pre>
+<pre><code>Filtered valid orders. Rows reduced from 112650 to 112647.
+Merged dataset created with 112647 rows and 15 columns.
+Cleaned dataset. Rows reduced from 112647 to 111035.</code></pre>
 </div>
 </div>
-<div id="2c67f1c7" class="cell" data-execution_count="7">
-<details class="code-fold">
+<div id="cell-7" class="cell" data-execution_count="4">
+<details open="" class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Merge Items with Products (Link Price to Weight)</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="st">'product_id'</span> <span class="kw">in</span> items.columns <span class="kw">and</span> <span class="st">'product_id'</span> <span class="kw">in</span> products.columns:</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> pd.merge(items, products, on<span class="op">=</span><span class="st">'product_id'</span>, how<span class="op">=</span><span class="st">'inner'</span>)</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Merged dataset created with </span><span class="sc">{</span>df<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">}</span><span class="ss"> rows and </span><span class="sc">{</span>df<span class="sc">.</span>shape[<span class="dv">1</span>]<span class="sc">}</span><span class="ss"> columns."</span>)</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Error: 'product_id' column missing in one of the datasets."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>Merged dataset created with 112647 rows and 15 columns.</code></pre>
-</div>
-</div>
-<div id="39dacfeb" class="cell" data-execution_count="8">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Drop Errors (Missing values or 0s)</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>before_cleaning <span class="op">=</span> df.shape[<span class="dv">0</span>]</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df.dropna(subset<span class="op">=</span>[<span class="st">'product_category_name'</span>, <span class="st">'product_weight_g'</span>, <span class="st">'price'</span>])</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df[(df[<span class="st">'product_weight_g'</span>] <span class="op">&gt;</span> <span class="dv">0</span>) <span class="op">&amp;</span> (df[<span class="st">'price'</span>] <span class="op">&gt;</span> <span class="dv">0</span>)]</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Cleaned dataset. Rows reduced from </span><span class="sc">{</span>before_cleaning<span class="sc">}</span><span class="ss"> to </span><span class="sc">{</span>df<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">}</span><span class="ss">."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
-<div class="cell-output cell-output-stdout">
-<pre><code>Cleaned dataset. Rows reduced from 112647 to 111035.</code></pre>
-</div>
-</div>
-<div id="7568ddde" class="cell" data-execution_count="9">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Outlier Handling</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co"># We cap items at 30kg. Items heavier than this usually require special freight </span></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="co"># logic, so we exclude them to focus on standard warehouse capacity.</span></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>df_clean <span class="op">=</span> df[df[<span class="st">'product_weight_g'</span>] <span class="op">&lt;=</span> <span class="dv">30000</span>].copy()</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Original Rows: </span><span class="sc">{</span><span class="bu">len</span>(df)<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Cleaned Rows:  </span><span class="sc">{</span><span class="bu">len</span>(df_clean)<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Outlier Handling</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co"># We cap items at 30kg. Items heavier than this usually require special freight </span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># logic, so we exclude them to focus on standard warehouse capacity.</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>df_clean <span class="op">=</span> df[df[<span class="st">'product_weight_g'</span>] <span class="op">&lt;=</span> <span class="dv">30000</span>].copy()</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Original Rows: </span><span class="sc">{</span><span class="bu">len</span>(df)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Cleaned Rows:  </span><span class="sc">{</span><span class="bu">len</span>(df_clean)<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Original Rows: 111035
 Cleaned Rows:  111032</code></pre>
 </div>
 </div>
-<div id="98a15d3d" class="cell" data-execution_count="10">
-<details class="code-fold">
+</section>
+<section id="aggregate-save-parameters" class="level1">
+<h1>Aggregate &amp; Save Parameters</h1>
+<div id="cell-9" class="cell" data-execution_count="5">
+<details open="" class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Aggregate</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>lp_data <span class="op">=</span> df_clean.groupby(<span class="st">'product_category_name'</span>).agg({</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'price'</span>: <span class="st">'mean'</span>, <span class="co"># Pi: average revenue</span></span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">'product_weight_g'</span>: <span class="st">'mean'</span>, <span class="co"># wi : average  weight</span></span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">'order_item_id'</span>: <span class="st">'count'</span> <span class="co"># Di : total historical Demand</span></span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>}).reset_index()</span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="co"># rename columns</span></span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>lp_data.columns <span class="op">=</span> [<span class="st">'Category'</span>, <span class="st">'P_i'</span>, <span class="st">'W_i'</span>, <span class="st">'D_i'</span>]</span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>lp_data.to_csv(<span class="st">'data/lp_parameters.csv'</span>, index<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">'data/capacity.txt'</span>, <span class="st">'w'</span>) <span class="im">as</span> f:</span>
-<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>    f.write(<span class="bu">str</span>(df_clean[<span class="st">'product_weight_g'</span>].<span class="bu">sum</span>()))</span>
-<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Success! Created 'data/lp_parameters.csv' and 'data/capacity.txt'"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Aggregate</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>lp_data <span class="op">=</span> df_clean.groupby(<span class="st">'product_category_name'</span>).agg({</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'price'</span>: <span class="st">'mean'</span>, <span class="co"># Pi: average revenue</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">'product_weight_g'</span>: <span class="st">'mean'</span>, <span class="co"># wi : average  weight</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">'order_item_id'</span>: <span class="st">'count'</span> <span class="co"># Di : total historical Demand</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>}).reset_index()</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co"># rename columns</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>lp_data.columns <span class="op">=</span> [<span class="st">'Category'</span>, <span class="st">'P_i'</span>, <span class="st">'W_i'</span>, <span class="st">'D_i'</span>]</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>lp_data.to_csv(<span class="st">'Data/lp_parameters.csv'</span>, index<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">'Data/capacity.txt'</span>, <span class="st">'w'</span>) <span class="im">as</span> f:</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    f.write(<span class="bu">str</span>(df_clean[<span class="st">'product_weight_g'</span>].<span class="bu">sum</span>()))</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Success! Created 'data/lp_parameters.csv' and 'data/capacity.txt'"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Success! Created 'data/lp_parameters.csv' and 'data/capacity.txt'</code></pre>

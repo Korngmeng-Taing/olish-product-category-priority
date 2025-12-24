@@ -1,20 +1,21 @@
 project:
   type: website
-  output-dir: ../docs
+  output-dir: docs
+
 website:
   title: "olist_quarto"
   navbar:
     left:
       - href: index.qmd
         text: Home
-      - href: data.qmd
+      - href: data.ipynb # Points directly to your notebook
         text: Data
-      - href: model.qmd
+      - href: model.ipynb # Points directly to your notebook
         text: Model
-      - href: result.qmd
+      - href: result.ipynb # Points directly to your notebook
         text: Results
     right:
-      - href: about.qmd
+      - href: about.qmd # Make sure you created this file (optional)
         text: About team
 
 format:
@@ -22,8 +23,8 @@ format:
     theme: flatly
     highlight: ayu
     toc: true
-    toc-location: right
-    toc-depth: 1
-    number-sections: false
-    code-fold: true
+    code-fold: show # Allows users to see code
     df-print: paged
+
+execute:
+  echo: true # Ensures code is shown in the output
