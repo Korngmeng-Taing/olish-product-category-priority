@@ -1,6 +1,6 @@
 project:
   type: website
-  output-dir: ../docs
+  output-dir: docs
 
 website:
   title: "olist_quarto"
@@ -20,11 +20,12 @@ website:
 
 format:
   html:
-    theme: flatly
-    highlight: ayu
-    toc: true
-    code-fold: show # Allows users to see code
-    df-print: paged
+    theme:
+      - flatly
+      - custom.scss
+    #css: styles.css
 
 execute:
-  echo: true # Ensures code is shown in the output
+  echo: true
+  warning: false
+  message: false

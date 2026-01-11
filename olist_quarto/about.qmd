@@ -1,0 +1,53 @@
+---
+title: "Meet the Team"
+subtitle: "Group 1 — Operations Research Project"
+page-layout: full
+---
+
+<!-- Intro Section -->
+::: {.hero-section}
+We are a team of data science and logistics enthusiasts applying Linear Programming to solve real-world e-commerce challenges. This project was developed for the **Operations Research** course.
+:::
+
+<br>
+
+<!-- Team Grid -->
+::: {.grid}
+
+<!-- MEMBER 1 -->
+::: {.g-col-12 .g-col-md-4}
+::: {.team-card}
+![](https://ui-avatars.com/api/?name=Member+One&background=18bc9c&color=fff&size=128){.team-img}
+
+### Student Name 1
+<div class="role">Data Analyst</div>
+
+Responsible for data cleaning, preprocessing, and exploratory analysis of the Olist datasets.
+:::
+:::
+
+<!-- MEMBER 2 -->
+::: {.g-col-12 .g-col-md-4}
+::: {.team-card}
+![](https://ui-avatars.com/api/?name=Member+Two&background=2c3e50&color=fff&size=128){.team-img}
+
+### Student Name 2
+<div class="role">Mathematical Modeler</div>
+
+Formulated the Linear Programming objective function and defined the capacity constraints.
+:::
+:::
+
+<!-- MEMBER 3 -->
+::: {.g-col-12 .g-col-md-4}
+::: {.team-card}
+![](https://ui-avatars.com/api/?name=Member+Three&background=18bc9c&color=fff&size=128){.team-img}
+
+### Student Name 3
+<div class="role">Optimization Engineer</div>
+
+Implemented the Simplex algorithm using Python/PuLP and validated the optimal solution.
+:::
+:::
+
+:::
