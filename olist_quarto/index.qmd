@@ -316,3 +316,5 @@ Despite high demand, the low price-per-gram ratio reduced its priority in this m
 
 ### Strategy Recommendation
 > **Conclusion:** To maximize revenue under strict capacity limits, Olist should restrict logistics slots for heavy, low-margin categories (like Furniture or Cement) and prioritize high-density value items like **Watches** and **Electronics**.
+
+# 7.Conclusion
