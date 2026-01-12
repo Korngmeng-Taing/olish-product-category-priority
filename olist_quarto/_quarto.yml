@@ -1,9 +1,9 @@
 project:
   type: website
-  output-dir: docs
+  output-dir: ../docs
 
 website:
-  title: "olist_quarto"
+  title: "Olist Product Priority"
   navbar:
     left:
       - href: index.qmd
