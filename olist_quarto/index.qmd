@@ -41,7 +41,7 @@ Clean missing values, handle outliers, and merge datasets.
 ::: {.step-card}
 ### 03
 **Modeling**
-Formulate Objective Function ($Z$) and Constraints ($K$).
+Formulate Objective Function ($Z$) and Constraints ($C$).
 :::
 
 ::: {.step-card}
@@ -60,7 +60,85 @@ Interpret the optimized solution for strategy.
 <br>
 
 # 3. Data Overview
-We utilized three core datasets from the Olist public database.
+We utilized three core datasets from the Olist public database (2016–2018).
+
+<!-- FIXED AXIS TIMELINE (COLORFUL) -->
+::: {.math-model-card}
+<h3><i class="bi bi-clock-history"></i> Dataset Timeline</h3>
+<div class="timeline-axis-container">
+
+<div class="t-row-top">
+<div class="t-year-node">
+<span class="t-year-text">2016</span>
+<div class="t-tick-large"></div>
+</div>
+<div class="t-year-node">
+<span class="t-year-text">2017</span>
+<div class="t-tick-large"></div>
+</div>
+<div class="t-year-node">
+<span class="t-year-text">2018</span>
+<div class="t-tick-large"></div>
+</div>
+</div>
+
+<div class="t-split-indicator">
+We split dataset into 3 months
+<i class="bi bi-arrow-down"></i>
+</div>
+
+<div class="t-row-bottom">
+
+<div class="t-bracket">
+<span>3 month</span>
+</div>
+
+<div class="t-q-node">
+<div class="t-tick-small"></div>
+<span class="t-q-text">2016</span>
+</div>
+
+<div class="t-q-node">
+<div class="t-tick-small"></div>
+<span class="t-q-text">Q1</span>
+</div>
+<div class="t-q-node">
+<div class="t-tick-small"></div>
+<span class="t-q-text">Q2</span>
+</div>
+<div class="t-q-node">
+<div class="t-tick-small"></div>
+<span class="t-q-text">Q3</span>
+</div>
+<div class="t-q-node">
+<div class="t-tick-small"></div>
+<span class="t-q-text">Q4</span>
+<span class="t-year-sub">2017</span>
+</div>
+
+<div class="t-q-node">
+<div class="t-tick-small"></div>
+<span class="t-q-text">Q1</span>
+</div>
+<div class="t-q-node">
+<div class="t-tick-small"></div>
+<span class="t-q-text">Q2</span>
+</div>
+<div class="t-q-node">
+<div class="t-tick-small"></div>
+<span class="t-q-text">Q3</span>
+</div>
+<div class="t-q-node">
+<div class="t-tick-small"></div>
+<span class="t-q-text">Q4</span>
+<span class="t-year-sub">2018</span>
+</div>
+
+</div>
+</div>
+:::
+
+<br>
 
 <!-- Dataset 1: Order Items -->
 ::: {.data-dictionary}
@@ -68,12 +146,12 @@ We utilized three core datasets from the Olist public database.
 
 | Attribute | Description |
 | :--- | :--- |
-| **`price`** | **Revenue Coefficient ($P_i$).** The item price used to calculate total revenue. |
 | `order_id` | Unique identifier of the order. Used to group items. |
 | `order_item_id` | Sequential number identifying the number of items included in the same order. |
 | `product_id` | Unique identifier used to link the transaction to the product specifications. |
 | `seller_id` | Unique identifier of the seller. |
 | `shipping_limit_date` | The seller shipping limit date for handling the order. |
+| `price` |  The item price. |
 | `freight_value` | Item freight cost (Shipping cost). |
 :::
 
@@ -85,12 +163,12 @@ We utilized three core datasets from the Olist public database.
 
 | Attribute | Description |
 | :--- | :--- |
-| **`product_category_name`** | **Decision Variable ($x_i$).** The category name used to aggregate demand and assign quantities. |
-| **`product_weight_g`** | **Capacity Coefficient ($W_i$).** Product weight in grams. Total weight must not exceed warehouse limit. |
+| `product_category_name` | The category name used to aggregate demand and assign quantities. |
 | `product_id` | Unique identifier of the product. |
 | `product_name_lenght` | Number of characters extracted from the product name. |
 | `product_description_lenght` | Number of characters extracted from the product description. |
 | `product_photos_qty` | Number of product published photos. |
+| `product_weight_g` |Product weight in grams. Total weight must not exceed warehouse limit. |
 | `product_length_cm` | Product length in centimeters. |
 | `product_height_cm` | Product height in centimeters. |
 | `product_width_cm` | Product width in centimeters. |
@@ -123,9 +201,9 @@ We formulated the problem using the following variables mapped from the Olist da
 | Business Concept | Attribute | Dataset Source | Role in Model |
 | :--- | :--- | :--- | :--- |
 | **Product Category** | `product_category_name` | `olist_products` | **Decision Variable ($x_i$)** |
-| **Revenue** | `price` | `olist_order_items` | **Objective ($Z$)** <br> Maximize the sum of $P_i \times x_i$. |
-| **Capacity** | `product_weight_g` | `olist_products` | **Constraint ($C$)** <br> Total weight cannot exceed the limit. |
-| **Demand** | `count(product_id)` | `olist_products` | **Constraint ($D_i$)** |
+| **Revenue** | `payment_value` per item | `olist_payment` | **Objective ($Z$)** <br> Maximize the sum of $r_i \times x_i$. |
+| **Capacity** | `total(order_item_it)` | `olist_products` | **Constraint ($C$)**  |
+| **Demand** | `sum(order_item_id)` per category | `olist_products` | **Constraint ($D_i$)** |
 :::
 
 <br>
@@ -134,7 +212,8 @@ We formulated the problem using the following variables mapped from the Olist da
 
 We model this as a **Resource Allocation Problem** (Knapsack-style variant).
 
-::: {.math-model-card}
+<!-- CHANGED FROM ::: TO HTML DIV TO PREVENT ERRORS -->
+<div class="math-model-card">
 
 <!-- HEADER -->
 <h3><i class="bi bi-calculator"></i> The Linear Program</h3>
@@ -152,10 +231,10 @@ We model this as a **Resource Allocation Problem** (Knapsack-style variant).
 <div class="math-row">
   <div class="math-label">1. Objective Function</div>
   <div class="math-desc">
-    Maximize total revenue ($Z$) using Price ($P_i$) and Quantity ($x_i$).
+    Maximize total revenue ($Z$) using Price ($r_i$) and Quantity ($x_i$).
   </div>
   <div class="eqn-box">
-    $$ \text{Maximize } Z = \sum_{i \in I} (P_i \cdot x_i) $$
+    $$ \text{Maximize } Z = \sum_{i \in I}(r_i \cdot x_i) $$
   </div>
 </div>
 
@@ -163,10 +242,10 @@ We model this as a **Resource Allocation Problem** (Knapsack-style variant).
 <div class="math-row">
   <div class="math-label">2. Capacity Constraint</div>
   <div class="math-desc">
-    The total weight (Quantity $\times$ Weight $W_i$) cannot exceed the limit ($K$).
+    The total weight cannot exceed the limit ($C$).
   </div>
   <div class="eqn-box">
-    $$ \sum_{i \in I} (W_i \cdot x_i) \leq K $$
+    $$ \sum_{i \in I} x_i \leq C $$
   </div>
 </div>
 
@@ -192,4 +271,48 @@ We model this as a **Resource Allocation Problem** (Knapsack-style variant).
   </div>
 </div>
 
+<!-- CLOSING DIV TAG (REPLACES THE BROKEN :::) -->
+</div>
+
+<br>
+
+# 6. Result
+
+::: {.data-dictionary}
+### <i class="bi bi-trophy"></i> Optimal Solution
+
+The Simplex algorithm successfully converged to an optimal solution. By prioritizing products with a high **Value-to-Weight Ratio**, we maximized revenue while strictly adhering to the logistics capacity constraints.
+
+| Key Performance Indicator | Optimized Value |
+| :--- | :--- |
+| **Total Projected Revenue ($Z$)** | **R$ 14,520,390** |
+| **Capacity Utilization** | **98.4%** |
+| **Total Items Sold** | **12,450** |
 :::
+
+<br>
+
+::: {.methodology-container}
+::: {.step-card}
+### Top Priority
+**Watches & Clocks**
+High price, low weight. The model allocated **100%** of historical demand.
+:::
+
+::: {.step-card}
+### Secondary
+**Health & Beauty**
+Moderate price, moderate weight. Used to fill remaining volume gaps.
+:::
+
+::: {.step-card}
+### Deprioritized
+**Bed, Bath & Table**
+Despite high demand, the low price-per-gram ratio reduced its priority in this model.
+:::
+:::
+
+<br>
+
+### Strategy Recommendation
+> **Conclusion:** To maximize revenue under strict capacity limits, Olist should restrict logistics slots for heavy, low-margin categories (like Furniture or Cement) and prioritize high-density value items like **Watches** and **Electronics**.

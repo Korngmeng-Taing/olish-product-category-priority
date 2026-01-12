@@ -17,9 +17,9 @@ We are a team of data science and logistics enthusiasts applying Linear Programm
 <!-- MEMBER 1 -->
 ::: {.g-col-12 .g-col-md-4}
 ::: {.team-card}
-![](https://ui-avatars.com/api/?name=Member+One&background=18bc9c&color=fff&size=128){.team-img}
+![](image/mk.jpg){.team-img}
 
-### Student Name 1
+### Taing korngmeng
 <div class="role">Data Analyst</div>
 
 Responsible for data cleaning, preprocessing, and exploratory analysis of the Olist datasets.
@@ -29,9 +29,9 @@ Responsible for data cleaning, preprocessing, and exploratory analysis of the Ol
 <!-- MEMBER 2 -->
 ::: {.g-col-12 .g-col-md-4}
 ::: {.team-card}
-![](https://ui-avatars.com/api/?name=Member+Two&background=2c3e50&color=fff&size=128){.team-img}
+![](image/mk.jpg){.team-img}
 
-### Student Name 2
+### Phal Menghak
 <div class="role">Mathematical Modeler</div>
 
 Formulated the Linear Programming objective function and defined the capacity constraints.
@@ -41,9 +41,9 @@ Formulated the Linear Programming objective function and defined the capacity co
 <!-- MEMBER 3 -->
 ::: {.g-col-12 .g-col-md-4}
 ::: {.team-card}
-![](https://ui-avatars.com/api/?name=Member+Three&background=18bc9c&color=fff&size=128){.team-img}
+![](image/mk.jpg){.team-img}
 
-### Student Name 3
+### Sou Pichchomrong
 <div class="role">Optimization Engineer</div>
 
 Implemented the Simplex algorithm using Python/PuLP and validated the optimal solution.
