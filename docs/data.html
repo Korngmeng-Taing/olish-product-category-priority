@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>1. Data Analysis &amp; Preparation – Olist Product Priority</title>
+<title>Data Cleaning and Preprocessing – Olist Product Priority</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -58,7 +58,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="site_libs/quarto-nav/headroom.min.js"></script>
 <script src="site_libs/clipboard/clipboard.min.js"></script>
 <script src="site_libs/quarto-search/autocomplete.umd.js"></script>
@@ -103,6 +103,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 
 
 </head>
@@ -165,7 +168,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">1. Data Analysis &amp; Preparation</h1>
+<h1 class="title">Data Cleaning and Preprocessing</h1>
 </div>
 
 
@@ -182,138 +185,849 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>We begin by loading the raw datasets and merging them to create a unified view of “Sales vs.&nbsp;Logistics Cost”.</p>
-<div id="cell-2" class="cell" data-execution_count="1">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd </span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="cf">try</span>:</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># The ".." means go up one level to the main folder</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    items <span class="op">=</span> pd.read_csv(<span class="st">'Data/olist_order_items_dataset.csv'</span>)</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    products <span class="op">=</span> pd.read_csv(<span class="st">'Data/olist_products_dataset.csv'</span>)</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    payments <span class="op">=</span> pd.read_csv(<span class="st">'Data/olist_order_payments_dataset.csv'</span>)</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> items.empty <span class="kw">or</span> products.empty <span class="kw">or</span> payments.empty:</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">raise</span> <span class="pp">ValueError</span>(<span class="st">"One or more datasets are empty. Check the content of the CSV files."</span>)</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Datasets loaded successfully."</span>)</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> <span class="pp">FileNotFoundError</span>:</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Error: CSV files not found. Check your 'data' folder location."</span>)</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="cf">except</span> <span class="pp">ValueError</span> <span class="im">as</span> e:</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(e)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="importing-libraries" class="level2">
+<h2 class="anchored" data-anchor-id="importing-libraries">Importing Libraries</h2>
+<div id="0f9055f5" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.ticker <span class="im">as</span> ticker</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="load-the-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="load-the-dataset">1. Load the dataset</h2>
+<div id="769093c9" class="cell" data-execution_count="8">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(os.getcwd())</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Datasets loaded successfully.</code></pre>
+<pre><code>d:\I4\Operation research\final_project\olist_quarto</code></pre>
 </div>
 </div>
-<section id="dataset-overview" class="level1">
-<h1>Dataset Overview</h1>
-<div id="cell-4" class="cell" data-execution_count="2">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check shapes and missing values</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> name, df <span class="kw">in</span> {<span class="st">'Items'</span>: items, <span class="st">'Products'</span>: products, <span class="st">'Payments'</span>: payments}.items():</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>name<span class="sc">}</span><span class="ss"> Dataset: </span><span class="sc">{</span>df<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">}</span><span class="ss"> rows, </span><span class="sc">{</span>df<span class="sc">.</span>shape[<span class="dv">1</span>]<span class="sc">}</span><span class="ss"> columns"</span>)</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Missing values in </span><span class="sc">{</span>name<span class="sc">}</span><span class="ss"> dataset:</span><span class="ch">\n</span><span class="sc">{</span>df<span class="sc">.</span>isna()<span class="sc">.</span><span class="bu">sum</span>()<span class="sc">}</span><span class="ch">\n</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Items Dataset: 112650 rows, 7 columns
-Missing values in Items dataset:
-order_id               0
-order_item_id          0
-product_id             0
-seller_id              0
-shipping_limit_date    0
-price                  0
-freight_value          0
-dtype: int64
+<div id="422b706e" class="cell" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>order <span class="op">=</span> pd.read_csv(<span class="st">'data/olist_orders_dataset.csv'</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>order_item <span class="op">=</span> pd.read_csv(<span class="st">'data/olist_order_items_dataset.csv'</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>product <span class="op">=</span> pd.read_csv(<span class="st">'data/olist_products_dataset.csv'</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>order_payment <span class="op">=</span> pd.read_csv(<span class="st">'data/olist_order_payments_dataset.csv'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="merge-datasets-if-applicable" class="level2">
+<h2 class="anchored" data-anchor-id="merge-datasets-if-applicable">2. Merge datasets (if applicable)</h2>
+<div id="85504323" class="cell" data-execution_count="12">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> order_item.merge(order_payment, on<span class="op">=</span><span class="st">'order_id'</span>, how<span class="op">=</span><span class="st">'inner'</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df.merge(product, on<span class="op">=</span><span class="st">'product_id'</span>, how<span class="op">=</span><span class="st">'inner'</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df.merge(order, on<span class="op">=</span><span class="st">'order_id'</span>, how<span class="op">=</span><span class="st">'inner'</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>df.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="12">
+<div>
 
-Products Dataset: 32951 rows, 9 columns
-Missing values in Products dataset:
-product_id                      0
-product_category_name         610
-product_name_lenght           610
-product_description_lenght    610
-product_photos_qty            610
-product_weight_g                2
-product_length_cm               2
-product_height_cm               2
-product_width_cm                2
-dtype: int64
 
-Payments Dataset: 103886 rows, 5 columns
-Missing values in Payments dataset:
-order_id                0
-payment_sequential      0
-payment_type            0
-payment_installments    0
-payment_value           0
-dtype: int64
-</code></pre>
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">order_id</th>
+<th data-quarto-table-cell-role="th">order_item_id</th>
+<th data-quarto-table-cell-role="th">product_id</th>
+<th data-quarto-table-cell-role="th">seller_id</th>
+<th data-quarto-table-cell-role="th">shipping_limit_date</th>
+<th data-quarto-table-cell-role="th">price</th>
+<th data-quarto-table-cell-role="th">freight_value</th>
+<th data-quarto-table-cell-role="th">payment_sequential</th>
+<th data-quarto-table-cell-role="th">payment_type</th>
+<th data-quarto-table-cell-role="th">payment_installments</th>
+<th data-quarto-table-cell-role="th">...</th>
+<th data-quarto-table-cell-role="th">product_length_cm</th>
+<th data-quarto-table-cell-role="th">product_height_cm</th>
+<th data-quarto-table-cell-role="th">product_width_cm</th>
+<th data-quarto-table-cell-role="th">customer_id</th>
+<th data-quarto-table-cell-role="th">order_status</th>
+<th data-quarto-table-cell-role="th">order_purchase_timestamp</th>
+<th data-quarto-table-cell-role="th">order_approved_at</th>
+<th data-quarto-table-cell-role="th">order_delivered_carrier_date</th>
+<th data-quarto-table-cell-role="th">order_delivered_customer_date</th>
+<th data-quarto-table-cell-role="th">order_estimated_delivery_date</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>00010242fe8c5a6d1ba2dd792cb16214</td>
+<td>1</td>
+<td>4244733e06e7ecb4970a6e2683c13e61</td>
+<td>48436dade18ac8b2bce089ec2a041202</td>
+<td>2017-09-19 09:45:35</td>
+<td>58.90</td>
+<td>13.29</td>
+<td>1</td>
+<td>credit_card</td>
+<td>2</td>
+<td>...</td>
+<td>28.0</td>
+<td>9.0</td>
+<td>14.0</td>
+<td>3ce436f183e68e07877b285a838db11a</td>
+<td>delivered</td>
+<td>2017-09-13 08:59:02</td>
+<td>2017-09-13 09:45:35</td>
+<td>2017-09-19 18:34:16</td>
+<td>2017-09-20 23:43:48</td>
+<td>2017-09-29 00:00:00</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>00018f77f2f0320c557190d7a144bdd3</td>
+<td>1</td>
+<td>e5f2d52b802189ee658865ca93d83a8f</td>
+<td>dd7ddc04e1b6c2c614352b383efe2d36</td>
+<td>2017-05-03 11:05:13</td>
+<td>239.90</td>
+<td>19.93</td>
+<td>1</td>
+<td>credit_card</td>
+<td>3</td>
+<td>...</td>
+<td>50.0</td>
+<td>30.0</td>
+<td>40.0</td>
+<td>f6dd3ec061db4e3987629fe6b26e5cce</td>
+<td>delivered</td>
+<td>2017-04-26 10:53:06</td>
+<td>2017-04-26 11:05:13</td>
+<td>2017-05-04 14:35:00</td>
+<td>2017-05-12 16:04:24</td>
+<td>2017-05-15 00:00:00</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>000229ec398224ef6ca0657da4fc703e</td>
+<td>1</td>
+<td>c777355d18b72b67abbeef9df44fd0fd</td>
+<td>5b51032eddd242adc84c38acab88f23d</td>
+<td>2018-01-18 14:48:30</td>
+<td>199.00</td>
+<td>17.87</td>
+<td>1</td>
+<td>credit_card</td>
+<td>5</td>
+<td>...</td>
+<td>33.0</td>
+<td>13.0</td>
+<td>33.0</td>
+<td>6489ae5e4333f3693df5ad4372dab6d3</td>
+<td>delivered</td>
+<td>2018-01-14 14:33:31</td>
+<td>2018-01-14 14:48:30</td>
+<td>2018-01-16 12:36:48</td>
+<td>2018-01-22 13:19:16</td>
+<td>2018-02-05 00:00:00</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>00024acbcdf0a6daa1e931b038114c75</td>
+<td>1</td>
+<td>7634da152a4610f1595efa32f14722fc</td>
+<td>9d7a1d34a5052409006425275ba1c2b4</td>
+<td>2018-08-15 10:10:18</td>
+<td>12.99</td>
+<td>12.79</td>
+<td>1</td>
+<td>credit_card</td>
+<td>2</td>
+<td>...</td>
+<td>16.0</td>
+<td>10.0</td>
+<td>15.0</td>
+<td>d4eb9395c8c0431ee92fce09860c5a06</td>
+<td>delivered</td>
+<td>2018-08-08 10:00:35</td>
+<td>2018-08-08 10:10:18</td>
+<td>2018-08-10 13:28:00</td>
+<td>2018-08-14 13:32:39</td>
+<td>2018-08-20 00:00:00</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>00042b26cf59d7ce69dfabb4e55b4fd9</td>
+<td>1</td>
+<td>ac6c3623068f30de03045865e4e10089</td>
+<td>df560393f3a51e74553ab94004ba5c87</td>
+<td>2017-02-13 13:57:51</td>
+<td>199.90</td>
+<td>18.14</td>
+<td>1</td>
+<td>credit_card</td>
+<td>3</td>
+<td>...</td>
+<td>35.0</td>
+<td>40.0</td>
+<td>30.0</td>
+<td>58dbd0b2d70206bf40e62cd34e84d795</td>
+<td>delivered</td>
+<td>2017-02-04 13:57:51</td>
+<td>2017-02-04 14:10:13</td>
+<td>2017-02-16 09:46:09</td>
+<td>2017-03-01 16:42:31</td>
+<td>2017-03-17 00:00:00</td>
+</tr>
+</tbody>
+</table>
+
+<p>5 rows × 26 columns</p>
+</div>
 </div>
 </div>
 </section>
-<section id="clean-merge" class="level1">
-<h1>Clean &amp; Merge</h1>
-<div id="cell-6" class="cell" data-execution_count="3">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># --- MERGE &amp; CLEAN ---</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co">## 1. Filter for valid paid orders</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="st">'order_id'</span> <span class="kw">in</span> payments.columns <span class="kw">and</span> <span class="st">'order_id'</span> <span class="kw">in</span> items.columns:</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    valid_orders <span class="op">=</span> payments[<span class="st">'order_id'</span>].unique()</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    original_rows <span class="op">=</span> items.shape[<span class="dv">0</span>]</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    items <span class="op">=</span> items[items[<span class="st">'order_id'</span>].isin(valid_orders)]</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Filtered valid orders. Rows reduced from </span><span class="sc">{</span>original_rows<span class="sc">}</span><span class="ss"> to </span><span class="sc">{</span>items<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">}</span><span class="ss">."</span>)</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Error: 'order_id' column missing in one of the datasets."</span>)</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Merge Items with Products (Link Price to Weight)</span></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="st">'product_id'</span> <span class="kw">in</span> items.columns <span class="kw">and</span> <span class="st">'product_id'</span> <span class="kw">in</span> products.columns:</span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> pd.merge(items, products, on<span class="op">=</span><span class="st">'product_id'</span>, how<span class="op">=</span><span class="st">'inner'</span>)</span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Merged dataset created with </span><span class="sc">{</span>df<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">}</span><span class="ss"> rows and </span><span class="sc">{</span>df<span class="sc">.</span>shape[<span class="dv">1</span>]<span class="sc">}</span><span class="ss"> columns."</span>)</span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Error: 'product_id' column missing in one of the datasets."</span>)</span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Drop Errors (Missing values or 0s)</span></span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>before_cleaning <span class="op">=</span> df.shape[<span class="dv">0</span>]</span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df.dropna(subset<span class="op">=</span>[<span class="st">'product_category_name'</span>, <span class="st">'product_weight_g'</span>, <span class="st">'price'</span>])</span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df[(df[<span class="st">'product_weight_g'</span>] <span class="op">&gt;</span> <span class="dv">0</span>) <span class="op">&amp;</span> (df[<span class="st">'price'</span>] <span class="op">&gt;</span> <span class="dv">0</span>)]</span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Cleaned dataset. Rows reduced from </span><span class="sc">{</span>before_cleaning<span class="sc">}</span><span class="ss"> to </span><span class="sc">{</span>df<span class="sc">.</span>shape[<span class="dv">0</span>]<span class="sc">}</span><span class="ss">."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Filtered valid orders. Rows reduced from 112650 to 112647.
-Merged dataset created with 112647 rows and 15 columns.
-Cleaned dataset. Rows reduced from 112647 to 111035.</code></pre>
+<section id="data-cleaning" class="level2">
+<h2 class="anchored" data-anchor-id="data-cleaning">3. Data Cleaning</h2>
+<div id="ec7ec2e4" class="cell" data-execution_count="16">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> df[[<span class="st">'order_id'</span>, <span class="st">'order_item_id'</span>, <span class="st">'order_purchase_timestamp'</span>, <span class="st">'product_id'</span>,<span class="st">'product_category_name'</span>, <span class="st">'price'</span>,<span class="st">'payment_value'</span>]].copy()</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>data[<span class="st">'order_purchase_timestamp'</span>] <span class="op">=</span> pd.to_datetime(data[<span class="st">'order_purchase_timestamp'</span>])</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> data.sort_values(by<span class="op">=</span><span class="st">'order_purchase_timestamp'</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>data.reset_index(drop<span class="op">=</span><span class="va">True</span>, inplace<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>data[<span class="st">'quarter'</span>] <span class="op">=</span> data[<span class="st">'order_purchase_timestamp'</span>].dt.to_period(<span class="st">'Q'</span>).astype(<span class="bu">str</span>)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>data.to_csv(<span class="st">'data/cleaned_data.csv'</span>, index<span class="op">=</span><span class="va">False</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="2e9d5689" class="cell" data-execution_count="17">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> df[[<span class="st">'order_id'</span>, <span class="st">'order_item_id'</span>, <span class="st">'order_purchase_timestamp'</span>, <span class="st">'product_id'</span>,<span class="st">'product_category_name'</span>, <span class="st">'price'</span>,<span class="st">'payment_value'</span>]].copy()</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>data[<span class="st">'order_purchase_timestamp'</span>] <span class="op">=</span> pd.to_datetime(data[<span class="st">'order_purchase_timestamp'</span>])</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> data.sort_values(by<span class="op">=</span><span class="st">'order_purchase_timestamp'</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>data.reset_index(drop<span class="op">=</span><span class="va">True</span>, inplace<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>data[<span class="st">'quarter'</span>] <span class="op">=</span> data[<span class="st">'order_purchase_timestamp'</span>].dt.to_period(<span class="st">'Q'</span>).astype(<span class="bu">str</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>data.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="17">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">order_id</th>
+<th data-quarto-table-cell-role="th">order_item_id</th>
+<th data-quarto-table-cell-role="th">order_purchase_timestamp</th>
+<th data-quarto-table-cell-role="th">product_id</th>
+<th data-quarto-table-cell-role="th">product_category_name</th>
+<th data-quarto-table-cell-role="th">price</th>
+<th data-quarto-table-cell-role="th">payment_value</th>
+<th data-quarto-table-cell-role="th">quarter</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">0</th>
+<td>2e7a8482f6fb09756ca50c10d7bfc047</td>
+<td>2</td>
+<td>2016-09-04 21:15:19</td>
+<td>f293394c72c9b5fafd7023301fc21fc2</td>
+<td>moveis_decoracao</td>
+<td>32.90</td>
+<td>136.23</td>
+<td>2016Q3</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">1</th>
+<td>2e7a8482f6fb09756ca50c10d7bfc047</td>
+<td>1</td>
+<td>2016-09-04 21:15:19</td>
+<td>c1488892604e4ba5cff5b4eb4d595400</td>
+<td>moveis_decoracao</td>
+<td>39.99</td>
+<td>136.23</td>
+<td>2016Q3</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">2</th>
+<td>e5fa5a7210941f7d56d0208e4e071d35</td>
+<td>1</td>
+<td>2016-09-05 00:15:34</td>
+<td>f3c2d01a84c947b078e32bbef0718962</td>
+<td>telefonia</td>
+<td>59.50</td>
+<td>75.06</td>
+<td>2016Q3</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">3</th>
+<td>71303d7e93b399f5bcd537d124c0bcfa</td>
+<td>1</td>
+<td>2016-10-02 22:07:52</td>
+<td>d2998d7ced12f83f9b832f33cf6507b6</td>
+<td>bebes</td>
+<td>100.00</td>
+<td>109.34</td>
+<td>2016Q4</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">4</th>
+<td>3b697a20d9e427646d92567910af6d57</td>
+<td>1</td>
+<td>2016-10-03 09:44:50</td>
+<td>3ae08df6bcbfe23586dd431c40bddbb7</td>
+<td>relogios_presentes</td>
+<td>29.90</td>
+<td>45.46</td>
+<td>2016Q4</td>
+</tr>
+</tbody>
+</table>
+
 </div>
 </div>
-<div id="cell-7" class="cell" data-execution_count="4">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. Outlier Handling</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co"># We cap items at 30kg. Items heavier than this usually require special freight </span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># logic, so we exclude them to focus on standard warehouse capacity.</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>df_clean <span class="op">=</span> df[df[<span class="st">'product_weight_g'</span>] <span class="op">&lt;=</span> <span class="dv">30000</span>].copy()</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Original Rows: </span><span class="sc">{</span><span class="bu">len</span>(df)<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Cleaned Rows:  </span><span class="sc">{</span><span class="bu">len</span>(df_clean)<span class="sc">}</span><span class="ss">"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="eed16e61" class="cell" data-execution_count="18">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>data.tail()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="18">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">order_id</th>
+<th data-quarto-table-cell-role="th">order_item_id</th>
+<th data-quarto-table-cell-role="th">order_purchase_timestamp</th>
+<th data-quarto-table-cell-role="th">product_id</th>
+<th data-quarto-table-cell-role="th">product_category_name</th>
+<th data-quarto-table-cell-role="th">price</th>
+<th data-quarto-table-cell-role="th">payment_value</th>
+<th data-quarto-table-cell-role="th">quarter</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">117596</th>
+<td>0b223d92c27432930dfe407c6aea3041</td>
+<td>2</td>
+<td>2018-08-29 14:18:23</td>
+<td>2b4472df15512a2825ae86fd9ae79335</td>
+<td>moveis_cozinha_area_de_servico_jantar_e_jardim</td>
+<td>209.00</td>
+<td>510.96</td>
+<td>2018Q3</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">117597</th>
+<td>168626408cb32af0ffaf76711caae1dc</td>
+<td>1</td>
+<td>2018-08-29 14:18:28</td>
+<td>bdcf6a834e8faa30dac3886c7a58e92e</td>
+<td>beleza_saude</td>
+<td>45.90</td>
+<td>61.29</td>
+<td>2018Q3</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">117598</th>
+<td>03ef5dedbe7492bdae72eec50764c43f</td>
+<td>1</td>
+<td>2018-08-29 14:52:00</td>
+<td>c7f27c5bef2338541c772b5776403e6a</td>
+<td>artigos_de_festas</td>
+<td>24.90</td>
+<td>33.23</td>
+<td>2018Q3</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">117599</th>
+<td>35a972d7f8436f405b56e36add1a7140</td>
+<td>1</td>
+<td>2018-08-29 15:00:37</td>
+<td>d04857e7b4b708ee8b8b9921163edba3</td>
+<td>informatica_acessorios</td>
+<td>84.99</td>
+<td>93.75</td>
+<td>2018Q3</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">117600</th>
+<td>54282e97f61c23b78330c15b154c867d</td>
+<td>1</td>
+<td>2018-09-03 09:06:57</td>
+<td>b98992ea80b467987a7fbb88e7f2076a</td>
+<td>moveis_cozinha_area_de_servico_jantar_e_jardim</td>
+<td>145.00</td>
+<td>166.46</td>
+<td>2018Q3</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div id="6657a896" class="cell" data-execution_count="19">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>data.info()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>Original Rows: 111035
-Cleaned Rows:  111032</code></pre>
+<pre><code>&lt;class 'pandas.core.frame.DataFrame'&gt;
+RangeIndex: 117601 entries, 0 to 117600
+Data columns (total 8 columns):
+ #   Column                    Non-Null Count   Dtype         
+---  ------                    --------------   -----         
+ 0   order_id                  117601 non-null  object        
+ 1   order_item_id             117601 non-null  int64         
+ 2   order_purchase_timestamp  117601 non-null  datetime64[ns]
+ 3   product_id                117601 non-null  object        
+ 4   product_category_name     115903 non-null  object        
+ 5   price                     117601 non-null  float64       
+ 6   payment_value             117601 non-null  float64       
+ 7   quarter                   117601 non-null  object        
+dtypes: datetime64[ns](1), float64(2), int64(1), object(4)
+memory usage: 7.2+ MB</code></pre>
+</div>
+</div>
+<div id="8534648a" class="cell" data-execution_count="20">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>data.duplicated().<span class="bu">sum</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="20">
+<pre><code>np.int64(686)</code></pre>
+</div>
+</div>
+<div id="21e16438" class="cell" data-execution_count="21">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>data.drop_duplicates(keep<span class="op">=</span><span class="st">'first'</span>, inplace<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div id="94ce7b80" class="cell" data-execution_count="22">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>data.info()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;class 'pandas.core.frame.DataFrame'&gt;
+Index: 116915 entries, 0 to 117600
+Data columns (total 8 columns):
+ #   Column                    Non-Null Count   Dtype         
+---  ------                    --------------   -----         
+ 0   order_id                  116915 non-null  object        
+ 1   order_item_id             116915 non-null  int64         
+ 2   order_purchase_timestamp  116915 non-null  datetime64[ns]
+ 3   product_id                116915 non-null  object        
+ 4   product_category_name     115246 non-null  object        
+ 5   price                     116915 non-null  float64       
+ 6   payment_value             116915 non-null  float64       
+ 7   quarter                   116915 non-null  object        
+dtypes: datetime64[ns](1), float64(2), int64(1), object(4)
+memory usage: 8.0+ MB</code></pre>
+</div>
+</div>
+<div id="e2a062cf" class="cell" data-execution_count="23">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>data.isnull().<span class="bu">sum</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="23">
+<pre><code>order_id                       0
+order_item_id                  0
+order_purchase_timestamp       0
+product_id                     0
+product_category_name       1669
+price                          0
+payment_value                  0
+quarter                        0
+dtype: int64</code></pre>
+</div>
+</div>
+<div id="e06014ab" class="cell" data-execution_count="24">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>data[<span class="st">'product_category_name'</span>] <span class="op">=</span> data[<span class="st">'product_category_name'</span>].fillna(<span class="st">'unknown'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="data-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="data-analysis">4. Data Analysis</h2>
+<section id="summary-statistics" class="level3">
+<h3 class="anchored" data-anchor-id="summary-statistics">1. Summary Statistics</h3>
+<div id="88153c0d" class="cell" data-execution_count="25">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>data[[<span class="st">'order_item_id'</span>, <span class="st">'price'</span>, <span class="st">'payment_value'</span>]].describe()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="25">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">order_item_id</th>
+<th data-quarto-table-cell-role="th">price</th>
+<th data-quarto-table-cell-role="th">payment_value</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">count</th>
+<td>116915.000000</td>
+<td>116915.000000</td>
+<td>116915.000000</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">mean</th>
+<td>1.195937</td>
+<td>120.805822</td>
+<td>173.503818</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">std</th>
+<td>0.698358</td>
+<td>184.488721</td>
+<td>268.129952</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">min</th>
+<td>1.000000</td>
+<td>0.850000</td>
+<td>0.000000</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">25%</th>
+<td>1.000000</td>
+<td>39.900000</td>
+<td>61.590000</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">50%</th>
+<td>1.000000</td>
+<td>74.900000</td>
+<td>108.860000</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">75%</th>
+<td>1.000000</td>
+<td>134.900000</td>
+<td>189.720000</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">max</th>
+<td>21.000000</td>
+<td>6735.000000</td>
+<td>13664.080000</td>
+</tr>
+</tbody>
+</table>
+
+</div>
 </div>
 </div>
 </section>
-<section id="aggregate-save-parameters" class="level1">
-<h1>Aggregate &amp; Save Parameters</h1>
-<div id="cell-9" class="cell" data-execution_count="5">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Aggregate</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>lp_data <span class="op">=</span> df_clean.groupby(<span class="st">'product_category_name'</span>).agg({</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'price'</span>: <span class="st">'mean'</span>, <span class="co"># Pi: average revenue</span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">'product_weight_g'</span>: <span class="st">'mean'</span>, <span class="co"># wi : average  weight</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">'order_item_id'</span>: <span class="st">'count'</span> <span class="co"># Di : total historical Demand</span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>}).reset_index()</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co"># rename columns</span></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>lp_data.columns <span class="op">=</span> [<span class="st">'Category'</span>, <span class="st">'P_i'</span>, <span class="st">'W_i'</span>, <span class="st">'D_i'</span>]</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>lp_data.to_csv(<span class="st">'Data/lp_parameters.csv'</span>, index<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">'Data/capacity.txt'</span>, <span class="st">'w'</span>) <span class="im">as</span> f:</span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    f.write(<span class="bu">str</span>(df_clean[<span class="st">'product_weight_g'</span>].<span class="bu">sum</span>()))</span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Success! Created 'data/lp_parameters.csv' and 'data/capacity.txt'"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>Success! Created 'data/lp_parameters.csv' and 'data/capacity.txt'</code></pre>
+<section id="total-sale-volumn-by-category" class="level3">
+<h3 class="anchored" data-anchor-id="total-sale-volumn-by-category">2. Total Sale Volumn by Category</h3>
+<div id="c97012b5" class="cell" data-execution_count="26">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>volume_by_category <span class="op">=</span> (</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    data.groupby(<span class="st">'product_category_name'</span>)</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    .size()</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    .reset_index(name<span class="op">=</span><span class="st">'items_sold'</span>)</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>volume_by_category <span class="op">=</span> volume_by_category.sort_values(by<span class="op">=</span><span class="st">'items_sold'</span>, ascending<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>volume_by_category.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="26">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">product_category_name</th>
+<th data-quarto-table-cell-role="th">items_sold</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">13</th>
+<td>cama_mesa_banho</td>
+<td>11726</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">11</th>
+<td>beleza_saude</td>
+<td>9917</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">32</th>
+<td>esporte_lazer</td>
+<td>8890</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">54</th>
+<td>moveis_decoracao</td>
+<td>8702</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">44</th>
+<td>informatica_acessorios</td>
+<td>8070</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="total-revenue-by-category" class="level3">
+<h3 class="anchored" data-anchor-id="total-revenue-by-category">3. Total Revenue by Category</h3>
+<div id="34e79b7d" class="cell" data-execution_count="27">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>revenue_by_category <span class="op">=</span> (</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    data.groupby(<span class="st">'product_category_name'</span>)[<span class="st">'price'</span>]</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    .<span class="bu">sum</span>()</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>    .reset_index(name<span class="op">=</span><span class="st">'total_revenue'</span>)</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>revenue_by_category <span class="op">=</span> revenue_by_category.sort_values(by<span class="op">=</span><span class="st">'total_revenue'</span>, ascending<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>revenue_by_category.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="27">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">product_category_name</th>
+<th data-quarto-table-cell-role="th">total_revenue</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">11</th>
+<td>beleza_saude</td>
+<td>1290461.24</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">66</th>
+<td>relogios_presentes</td>
+<td>1250132.86</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">13</th>
+<td>cama_mesa_banho</td>
+<td>1087201.59</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">32</th>
+<td>esporte_lazer</td>
+<td>1018500.78</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">44</th>
+<td>informatica_acessorios</td>
+<td>939808.57</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div id="54269813" class="cell" data-execution_count="28">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>fig, ax1 <span class="op">=</span> plt.subplots(<span class="dv">2</span>, <span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">14</span>, <span class="dv">12</span>))</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot Top Categories by Revenue</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>sns.barplot(x<span class="op">=</span><span class="st">'total_revenue'</span>, y<span class="op">=</span><span class="st">'product_category_name'</span>, data<span class="op">=</span>revenue_by_category.head(<span class="dv">10</span>), palette<span class="op">=</span><span class="st">'viridis'</span>, ax<span class="op">=</span>ax1[<span class="dv">0</span>]) </span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>ax1[<span class="dv">0</span>].set_title(<span class="st">'Top 10 Product Categories by Revenue'</span>, fontsize<span class="op">=</span><span class="dv">16</span>)</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>ax1[<span class="dv">0</span>].set_xlabel(<span class="st">'Total Revenue (R$)'</span>)</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>ax1[<span class="dv">0</span>].set_ylabel(<span class="st">'Product Category'</span>)</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>ax1[<span class="dv">0</span>].xaxis.set_major_formatter(ticker.FuncFormatter(<span class="kw">lambda</span> x, pos: <span class="ss">f'R$</span><span class="sc">{</span>x<span class="op">/</span><span class="dv">1000</span><span class="sc">:,.0f}</span><span class="ss">k'</span>)) </span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot Top Categories by Demand</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>sns.barplot(x<span class="op">=</span><span class="st">'items_sold'</span>, y<span class="op">=</span><span class="st">'product_category_name'</span>, data<span class="op">=</span>volume_by_category.head(<span class="dv">10</span>), palette<span class="op">=</span><span class="st">'magma'</span>, ax<span class="op">=</span>ax1[<span class="dv">1</span>])</span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>ax1[<span class="dv">1</span>].set_title(<span class="st">'Top 10 Product Categories by Demand'</span>, fontsize<span class="op">=</span><span class="dv">16</span>)</span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>ax1[<span class="dv">1</span>].set_xlabel(<span class="st">'Total Items Sold (Qty)'</span>)</span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a>ax1[<span class="dv">1</span>].set_ylabel(<span class="st">'Product Category'</span>)</span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a>ax1[<span class="dv">1</span>].xaxis.set_major_formatter(ticker.FuncFormatter(<span class="kw">lambda</span> x, pos: <span class="ss">f'</span><span class="sc">{</span>x<span class="sc">:,.0f}</span><span class="ss">'</span>))</span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="data_files/figure-html/cell-18-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="average-price-by-category" class="level3">
+<h3 class="anchored" data-anchor-id="average-price-by-category">4. Average Price by Category</h3>
+<div id="81c90f73" class="cell" data-execution_count="30">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>category_stats <span class="op">=</span> volume_by_category.merge(</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    revenue_by_category,</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    on<span class="op">=</span><span class="st">'product_category_name'</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>category_stats[<span class="st">'avg_revenue_per_item'</span>] <span class="op">=</span> (</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>    category_stats[<span class="st">'total_revenue'</span>] <span class="op">/</span> category_stats[<span class="st">'items_sold'</span>]</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>category_stats.sort_values(</span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">'avg_revenue_per_item'</span>, ascending<span class="op">=</span><span class="va">False</span></span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>).head(<span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display" data-execution_count="30">
+<div>
+
+
+<table class="dataframe caption-top table table-sm table-striped small" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">product_category_name</th>
+<th data-quarto-table-cell-role="th">items_sold</th>
+<th data-quarto-table-cell-role="th">total_revenue</th>
+<th data-quarto-table-cell-role="th">avg_revenue_per_item</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">46</th>
+<td>pcs</td>
+<td>215</td>
+<td>237013.01</td>
+<td>1102.386093</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">55</th>
+<td>portateis_casa_forno_e_cafe</td>
+<td>78</td>
+<td>48945.71</td>
+<td>627.509103</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">42</th>
+<td>eletrodomesticos_2</td>
+<td>258</td>
+<td>118965.41</td>
+<td>461.106240</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">43</th>
+<td>agro_industria_e_comercio</td>
+<td>249</td>
+<td>83670.95</td>
+<td>336.027912</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">25</th>
+<td>eletroportateis</td>
+<td>700</td>
+<td>200812.67</td>
+<td>286.875243</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">24</th>
+<td>instrumentos_musicais</td>
+<td>703</td>
+<td>201370.31</td>
+<td>286.444253</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">69</th>
+<td>portateis_cozinha_e_preparadores_de_alimentos</td>
+<td>15</td>
+<td>3968.53</td>
+<td>264.568667</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">40</th>
+<td>telefonia_fixa</td>
+<td>271</td>
+<td>61701.26</td>
+<td>227.679926</td>
+</tr>
+<tr class="odd">
+<th data-quarto-table-cell-role="th">48</th>
+<td>construcao_ferramentas_seguranca</td>
+<td>199</td>
+<td>41977.51</td>
+<td>210.942261</td>
+</tr>
+<tr class="even">
+<th data-quarto-table-cell-role="th">6</th>
+<td>relogios_presentes</td>
+<td>6174</td>
+<td>1250132.86</td>
+<td>202.483456</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div id="e7a801de" class="cell" data-execution_count="31">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot Top 15 Categories by Average Revenue</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">6</span>))</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>top_rev_categories <span class="op">=</span> category_stats.sort_values(<span class="st">'avg_revenue_per_item'</span>, ascending<span class="op">=</span><span class="va">False</span>).head(<span class="dv">15</span>)</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>sns.barplot(</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>    data<span class="op">=</span>top_rev_categories, </span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span><span class="st">'avg_revenue_per_item'</span>, </span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span><span class="st">'product_category_name'</span>, </span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>    palette<span class="op">=</span><span class="st">'viridis'</span></span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Top 15 Categories by Average Revenue per Item ($r_i$)'</span>, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Average Revenue (Price + Freight)'</span>)</span>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Category'</span>)</span>
+<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="data_files/figure-html/cell-20-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="cbd01a0e" class="cell" data-execution_count="32">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Grouping by month to see handling trends</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>data[<span class="st">'month_year'</span>] <span class="op">=</span> data[<span class="st">'order_purchase_timestamp'</span>].dt.to_period(<span class="st">'M'</span>)</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>monthly_volume <span class="op">=</span> data.groupby(<span class="st">'month_year'</span>).size()</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">5</span>))</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>monthly_volume.plot(kind<span class="op">=</span><span class="st">'line'</span>, marker<span class="op">=</span><span class="st">'o'</span>, color<span class="op">=</span><span class="st">'teal'</span>)</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Monthly Handling Volume (Olist Logistics Capacity)'</span>, fontsize<span class="op">=</span><span class="dv">14</span>)</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Number of Items Handled'</span>)</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Time'</span>)</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>plt.axhline(monthly_volume.mean(), color<span class="op">=</span><span class="st">'red'</span>, linestyle<span class="op">=</span><span class="st">'--'</span>, label<span class="op">=</span><span class="st">'Average Capacity'</span>)</span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>plt.xlim(monthly_volume.index.<span class="bu">min</span>(), monthly_volume.index.<span class="bu">max</span>()<span class="op">+</span><span class="dv">1</span>)</span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="data_files/figure-html/cell-21-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<div id="8cb0b79f" class="cell" data-execution_count="33">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Aggregate data for plotting</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>quarters_sorted <span class="op">=</span> <span class="bu">sorted</span>(data[<span class="st">'quarter'</span>].unique())</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>global_trend <span class="op">=</span> data.groupby(<span class="st">'quarter'</span>).agg(</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>    revenue <span class="op">=</span> (<span class="st">'price'</span>, <span class="st">'sum'</span>),</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>    demand <span class="op">=</span> (<span class="st">'order_item_id'</span>, <span class="st">'count'</span>)</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>).reindex(quarters_sorted).reset_index()</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>fig, ax1 <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">14</span>, <span class="dv">8</span>))</span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Bar Chart for Revenue (Left Axis)</span></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>sns.barplot(x<span class="op">=</span><span class="st">'quarter'</span>, y<span class="op">=</span><span class="st">'revenue'</span>, data<span class="op">=</span>global_trend, color<span class="op">=</span><span class="st">'skyblue'</span>, alpha<span class="op">=</span><span class="fl">0.6</span>, ax<span class="op">=</span>ax1, label<span class="op">=</span><span class="st">'Total Revenue'</span>)</span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>ax1.set_ylabel(<span class="st">'Total Revenue (R$)'</span>, color<span class="op">=</span><span class="st">'blue'</span>)</span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>ax1.tick_params(axis<span class="op">=</span><span class="st">'y'</span>, labelcolor<span class="op">=</span><span class="st">'blue'</span>)</span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>ax1.yaxis.set_major_formatter(ticker.FuncFormatter(<span class="kw">lambda</span> x, pos: <span class="ss">f'R$</span><span class="sc">{</span>x<span class="op">/</span><span class="dv">1000</span><span class="sc">:,.0f}</span><span class="ss">k'</span>))</span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Line Chart for Demand (Right Axis)</span></span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a>ax2 <span class="op">=</span> ax1.twinx()</span>
+<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a>sns.lineplot(x<span class="op">=</span><span class="st">'quarter'</span>, y<span class="op">=</span><span class="st">'demand'</span>, data<span class="op">=</span>global_trend, color<span class="op">=</span><span class="st">'orange'</span>, marker<span class="op">=</span><span class="st">'o'</span>, linewidth<span class="op">=</span><span class="fl">2.5</span>, ax<span class="op">=</span>ax2, label<span class="op">=</span><span class="st">'Total Demand'</span>)</span>
+<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a>ax2.set_ylabel(<span class="st">'Total Items Sold (Qty)'</span>, color<span class="op">=</span><span class="st">'orange'</span>)</span>
+<span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a>ax2.tick_params(axis<span class="op">=</span><span class="st">'y'</span>, labelcolor<span class="op">=</span><span class="st">'orange'</span>)</span>
+<span id="cb26-21"><a href="#cb26-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-22"><a href="#cb26-22" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Global Quarterly Trend: Revenue vs. Demand (2016-2018)'</span>, fontsize<span class="op">=</span><span class="dv">16</span>)</span>
+<span id="cb26-23"><a href="#cb26-23" aria-hidden="true" tabindex="-1"></a>ax1.legend(loc<span class="op">=</span><span class="st">'upper left'</span>)</span>
+<span id="cb26-24"><a href="#cb26-24" aria-hidden="true" tabindex="-1"></a>ax2.legend(loc<span class="op">=</span><span class="st">'upper right'</span>)</span>
+<span id="cb26-25"><a href="#cb26-25" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="data_files/figure-html/cell-22-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
 </div>
 </div>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
