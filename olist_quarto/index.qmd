@@ -278,43 +278,5 @@ We model this as a **Resource Allocation Problem** (Knapsack-style variant).
 
 # 6. Result
 
-::: {.data-dictionary}
-### <i class="bi bi-trophy"></i> Optimal Solution
-
-The Simplex algorithm successfully converged to an optimal solution. By prioritizing products with a high **Value-to-Weight Ratio**, we maximized revenue while strictly adhering to the logistics capacity constraints.
-
-| Key Performance Indicator | Optimized Value |
-| :--- | :--- |
-| **Total Projected Revenue ($Z$)** | **R$ 14,520,390** |
-| **Capacity Utilization** | **98.4%** |
-| **Total Items Sold** | **12,450** |
-:::
-
-<br>
-
-::: {.methodology-container}
-::: {.step-card}
-### Top Priority
-**Watches & Clocks**
-High price, low weight. The model allocated **100%** of historical demand.
-:::
-
-::: {.step-card}
-### Secondary
-**Health & Beauty**
-Moderate price, moderate weight. Used to fill remaining volume gaps.
-:::
-
-::: {.step-card}
-### Deprioritized
-**Bed, Bath & Table**
-Despite high demand, the low price-per-gram ratio reduced its priority in this model.
-:::
-:::
-
-<br>
-
-### Strategy Recommendation
-> **Conclusion:** To maximize revenue under strict capacity limits, Olist should restrict logistics slots for heavy, low-margin categories (like Furniture or Cement) and prioritize high-density value items like **Watches** and **Electronics**.
 
 # 7.Conclusion
