@@ -225,7 +225,7 @@ We model this as a **Resource Allocation Problem** (Knapsack-style variant).
     Maximize total revenue ($Z$) using Price ($r_i$) and Quantity ($x_i$).
   </div>
   <div class="eqn-box">
-    $$ \text{Maximize } Z = \sum_{i \in I}(r_i \cdot x_i) $$
+    $$ \text{Maximize } Z = \sum_{i }(r_i \cdot x_i) $$
   </div>
 </div>
 
@@ -236,7 +236,7 @@ We model this as a **Resource Allocation Problem** (Knapsack-style variant).
     The total quantity cannot exceed the limit ($C$).
   </div>
   <div class="eqn-box">
-    $$ \sum_{i \in I} x_i \leq C $$
+    $$ \sum_{i } x_i \leq C $$
   </div>
 </div>
 
@@ -247,7 +247,7 @@ We model this as a **Resource Allocation Problem** (Knapsack-style variant).
     We cannot sell more than the historical market demand ($D_i$).
   </div>
   <div class="eqn-box">
-    $$ x_i \leq D_i \quad \forall i \in I $$
+    $$ x_i \leq D_i \quad \forall i  $$
   </div>
 </div>
 
