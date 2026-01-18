@@ -28,8 +28,8 @@ To solve this, we apply the **Simplex Method** following this workflow:
 ::: {.methodology-container}
 ::: {.step-card}
 ### 01
-**Data Mining**
-Extract historical sales behavior and physical product attributes.
+**Data Collection**
+collect data from kaggle
 :::
 
 ::: {.step-card}
@@ -47,7 +47,7 @@ Formulate Objective Function ($Z$) and Constraints ($C$).
 ::: {.step-card}
 ### 04
 **Optimization**
-Use Python `PuLP` to solve for the optimal $x$.
+Use Python ` scipy.optimize ,linprog` to solve for the optimal $x$.
 :::
 
 ::: {.step-card}
@@ -197,13 +197,12 @@ We formulated the problem using the following variables mapped from the Olist da
 
 ::: {.data-dictionary}
 ### <i class="bi bi-diagram-3"></i> Variable Mapping
-
-| Business Concept | Attribute | Dataset Source | Role in Model |
+| Component  | Symbol  | description | Calculation/Data source |
 | :--- | :--- | :--- | :--- |
-| **Product Category** | `product_category_name` | `olist_products` | **Decision Variable ($x_i$)** |
-| **Revenue** | `payment_value` per item | `olist_payment` | **Objective ($Z$)** <br> Maximize the sum of $r_i \times x_i$. |
-| **Capacity** | `total(order_item_it)` | `olist_products` | **Constraint ($C$)**  |
-| **Demand** | `sum(order_item_id)` per category | `olist_products` | **Constraint ($D_i$)** |
+| Decision Variable | $x_i$ | Quantity of  item for category i  |  product_category_name|
+| Objective coefficient| $r_i$ | average revenue per unit for category i | $r_i= \frac{\text{price in category i}}{\text{number item sold in category i}}$ |
+| Constraint Parameter | $D_i$ | Demand  linit for category i| $D_i= \frac{\text{total item sold in category i}}{total month}$ |
+| Constraint Parameter | $C_i$| Total handing Capacity  | $C_i= \frac{\sum\text{total item sold}}{total month}$ |
 :::
 
 <br>
@@ -218,14 +217,6 @@ We model this as a **Resource Allocation Problem** (Knapsack-style variant).
 <!-- HEADER -->
 <h3><i class="bi bi-calculator"></i> The Linear Program</h3>
 
-<!-- SETS & INDICES -->
-<div class="math-sets">
-  <strong>Sets & Indices</strong>
-  <ul>
-    <li>$I$: Set of all product categories (derived from <code>olist_products</code>).</li>
-    <li>$i$: Index representing a specific category (e.g., $i = \text{Watches}$).</li>
-  </ul>
-</div>
 
 <!-- 1. OBJECTIVE -->
 <div class="math-row">
@@ -234,7 +225,7 @@ We model this as a **Resource Allocation Problem** (Knapsack-style variant).
     Maximize total revenue ($Z$) using Price ($r_i$) and Quantity ($x_i$).
   </div>
   <div class="eqn-box">
-    $$ \text{Maximize } Z = \sum_{i \in I}(r_i \cdot x_i) $$
+    $$ \text{Maximize } Z = \sum_{i }(r_i \cdot x_i) $$
   </div>
 </div>
 
@@ -242,10 +233,10 @@ We model this as a **Resource Allocation Problem** (Knapsack-style variant).
 <div class="math-row">
   <div class="math-label">2. Capacity Constraint</div>
   <div class="math-desc">
-    The total weight cannot exceed the limit ($C$).
+    The total quantity cannot exceed the limit ($C$).
   </div>
   <div class="eqn-box">
-    $$ \sum_{i \in I} x_i \leq C $$
+    $$ \sum_{i } x_i \leq C $$
   </div>
 </div>
 
@@ -256,7 +247,7 @@ We model this as a **Resource Allocation Problem** (Knapsack-style variant).
     We cannot sell more than the historical market demand ($D_i$).
   </div>
   <div class="eqn-box">
-    $$ x_i \leq D_i \quad \forall i \in I $$
+    $$ x_i \leq D_i \quad \forall i  $$
   </div>
 </div>
 
@@ -267,7 +258,7 @@ We model this as a **Resource Allocation Problem** (Knapsack-style variant).
     Quantities must be positive integers.
   </div>
   <div class="eqn-box">
-    $$ x_i \geq 0, \quad x_i \in \mathbb{Z}^+ $$
+    $$ x_i \geq 0 $$
   </div>
 </div>
 
@@ -276,45 +267,9 @@ We model this as a **Resource Allocation Problem** (Knapsack-style variant).
 
 <br>
 
-# 6. Result
+# 6. Results 
 
-::: {.data-dictionary}
-### <i class="bi bi-trophy"></i> Optimal Solution
-
-The Simplex algorithm successfully converged to an optimal solution. By prioritizing products with a high **Value-to-Weight Ratio**, we maximized revenue while strictly adhering to the logistics capacity constraints.
-
-| Key Performance Indicator | Optimized Value |
-| :--- | :--- |
-| **Total Projected Revenue ($Z$)** | **R$ 14,520,390** |
-| **Capacity Utilization** | **98.4%** |
-| **Total Items Sold** | **12,450** |
+::: {.dataset-car}
+![Image 1](image/output1.png)
 :::
 
-<br>
-
-::: {.methodology-container}
-::: {.step-card}
-### Top Priority
-**Watches & Clocks**
-High price, low weight. The model allocated **100%** of historical demand.
-:::
-
-::: {.step-card}
-### Secondary
-**Health & Beauty**
-Moderate price, moderate weight. Used to fill remaining volume gaps.
-:::
-
-::: {.step-card}
-### Deprioritized
-**Bed, Bath & Table**
-Despite high demand, the low price-per-gram ratio reduced its priority in this model.
-:::
-:::
-
-<br>
-
-### Strategy Recommendation
-> **Conclusion:** To maximize revenue under strict capacity limits, Olist should restrict logistics slots for heavy, low-margin categories (like Furniture or Cement) and prioritize high-density value items like **Watches** and **Electronics**.
-
-# 7.Conclusion

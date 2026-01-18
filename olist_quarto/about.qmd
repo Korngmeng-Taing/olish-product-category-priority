@@ -1,12 +1,12 @@
 ---
 title: "Meet the Team"
-subtitle: "Group 1 — Operations Research Project"
+subtitle: "Group 2 — Operations Research Project"
 page-layout: full
 ---
 
 <!-- Intro Section -->
 ::: {.hero-section}
-We are a team of data science and logistics enthusiasts applying Linear Programming to solve real-world e-commerce challenges. This project was developed for the **Operations Research** course.
+We are group 2 applying Linear Programming to solve real-world e-commerce challenges. This project was developed for the **Operations Research** course.
 :::
 
 <br>
@@ -17,36 +17,34 @@ We are a team of data science and logistics enthusiasts applying Linear Programm
 <!-- MEMBER 1 -->
 ::: {.g-col-12 .g-col-md-4}
 ::: {.team-card}
-![](image/mk.jpg){.team-img}
+![](image/km.jpg){.team-img}
 
 ### Taing korngmeng
-<div class="role">Data Analyst</div>
+<div class="role">Quarto design,clean data</div>
 
-Responsible for data cleaning, preprocessing, and exploratory analysis of the Olist datasets.
 :::
 :::
 
 <!-- MEMBER 2 -->
 ::: {.g-col-12 .g-col-md-4}
 ::: {.team-card}
-![](image/mk.jpg){.team-img}
+![](image/mk2.jpg){.team-img}
 
 ### Phal Menghak
 <div class="role">Mathematical Modeler</div>
 
-Formulated the Linear Programming objective function and defined the capacity constraints.
 :::
 :::
 
 <!-- MEMBER 3 -->
 ::: {.g-col-12 .g-col-md-4}
 ::: {.team-card}
-![](image/mk.jpg){.team-img}
+![](image/cr.jpg){.team-img}
 
 ### Sou Pichchomrong
-<div class="role">Optimization Engineer</div>
+<div class="role">Data Analyst </div>
 
-Implemented the Simplex algorithm using Python/PuLP and validated the optimal solution.
+
 :::
 :::
 

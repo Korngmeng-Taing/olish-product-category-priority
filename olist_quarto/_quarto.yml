@@ -12,8 +12,6 @@ website:
         text: Data
       - href: model.ipynb # Points directly to your notebook
         text: Model
-      - href: result.ipynb # Points directly to your notebook
-        text: Results
     right:
       - href: about.qmd # Make sure you created this file (optional)
         text: About team
@@ -21,9 +19,14 @@ website:
 format:
   html:
     theme:
-      - flatly
+      - cosmo
       - custom.scss
     #css: styles.css
+    page-layout: full # Uses full screen width (Crucial for DataViz)
+    smooth-scroll: true # Nicer scrolling experience
+    code-fold: true
+    code-tools: true # Adds a "Show Source" button at the top right
+    df-print: paged
 
 execute:
   echo: true
