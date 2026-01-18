@@ -171,10 +171,6 @@ window.Quarto = {
     <a class="nav-link active" href="./model.html" aria-current="page"> 
 <span class="menu-text">Model</span></a>
   </li>  
-  <li class="nav-item">
-    <a class="nav-link" href="./result.ipynb"> 
-<span class="menu-text">Results</span></a>
-  </li>  
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
@@ -1277,7 +1273,7 @@ Total Optimal Quantity:  17481.0</code></pre>
 </div>
 </div>
 </div>
-<div id="9a5f688f" class="cell">
+<div id="9a5f688f" class="cell" data-execution_count="33">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>fig, ax1 <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">14</span>, <span class="dv">8</span>))</span>
@@ -1309,24 +1305,10 @@ Total Optimal Quantity:  17481.0</code></pre>
 <span id="cb31-27"><a href="#cb31-27" aria-hidden="true" tabindex="-1"></a>ax2.legend(loc<span class="op">=</span><span class="st">'upper right'</span>)</span>
 <span id="cb31-28"><a href="#cb31-28" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
-<div class="cell-output cell-output-error">
-<div class="ansi-escaped-output">
-<pre><span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">TypeError</span>                                 Traceback (most recent call last)
-<span class="ansi-cyan-fg">Cell</span><span class="ansi-cyan-fg"> </span><span class="ansi-green-fg">In[32]</span><span class="ansi-green-fg">, line 22</span>
-<span class="ansi-green-fg">     20</span> ax2.tick_params(axis=<span class="ansi-yellow-fg">'</span><span class="ansi-yellow-fg">y</span><span class="ansi-yellow-fg">'</span>, labelcolor=<span class="ansi-yellow-fg">'</span><span class="ansi-yellow-fg">orange</span><span class="ansi-yellow-fg">'</span>)
-<span class="ansi-green-fg">     21</span> ax2.axhline(global_trend[<span class="ansi-yellow-fg">'</span><span class="ansi-yellow-fg">demand</span><span class="ansi-yellow-fg">'</span>].mean(), color=<span class="ansi-yellow-fg">'</span><span class="ansi-yellow-fg">red</span><span class="ansi-yellow-fg">'</span>, linestyle=<span class="ansi-yellow-fg">'</span><span class="ansi-yellow-fg">--</span><span class="ansi-yellow-fg">'</span>, label=<span class="ansi-yellow-fg">'</span><span class="ansi-yellow-fg">Average Demand</span><span class="ansi-yellow-fg">'</span>)
-<span class="ansi-green-fg">---&gt; </span><span class="ansi-green-fg">22</span> <span class="ansi-yellow-bg">ax2</span><span class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">text</span><span class="ansi-yellow-bg">(</span><span class="ansi-yellow-bg">)</span>
-<span class="ansi-green-fg">     23</span> <span style="font-weight:bold;color:rgb(0,135,0)">for</span> i, v <span style="font-weight:bold;color:rgb(175,0,255)">in</span> <span style="color:rgb(0,135,0)">enumerate</span>(global_trend[<span class="ansi-yellow-fg">'</span><span class="ansi-yellow-fg">demand</span><span class="ansi-yellow-fg">'</span>]):
-<span class="ansi-green-fg">     24</span>     ax2.text(i+<span class="ansi-green-fg">0.2</span>, v+<span class="ansi-green-fg">100</span>, <span class="ansi-yellow-fg">f</span><span class="ansi-yellow-fg">'</span><span style="font-weight:bold;color:rgb(175,95,135)">{</span>v<span style="font-weight:bold;color:rgb(175,95,135)">:</span><span class="ansi-yellow-fg">.0f</span><span style="font-weight:bold;color:rgb(175,95,135)">}</span><span class="ansi-yellow-fg">'</span>, color = color2[i], va=<span class="ansi-yellow-fg">'</span><span class="ansi-yellow-fg">center</span><span class="ansi-yellow-fg">'</span>, fontweight=<span class="ansi-yellow-fg">'</span><span class="ansi-yellow-fg">bold</span><span class="ansi-yellow-fg">'</span>)
-
-<span class="ansi-red-fg">TypeError</span>: Axes.text() missing 3 required positional arguments: 'x', 'y', and 's'</pre>
-</div>
-</div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="model_files/figure-html/cell-28-output-2.png" class="img-fluid figure-img"></p>
+<p><img src="model_files/figure-html/cell-28-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>

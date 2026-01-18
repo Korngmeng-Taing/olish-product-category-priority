@@ -12,8 +12,6 @@ website:
         text: Data
       - href: model.ipynb # Points directly to your notebook
         text: Model
-      - href: result.ipynb # Points directly to your notebook
-        text: Results
     right:
       - href: about.qmd # Make sure you created this file (optional)
         text: About team

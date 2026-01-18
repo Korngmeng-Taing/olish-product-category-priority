@@ -270,6 +270,6 @@ We model this as a **Resource Allocation Problem** (Knapsack-style variant).
 # 6. Results 
 
 ::: {.dataset-car}
-![Image 1](image/output.png)
+![Image 1](image/output1.png)
 :::
 
