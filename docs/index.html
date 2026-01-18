@@ -207,7 +207,7 @@ window.Quarto = {
 <div class="methodology-container">
 <section id="section" class="level3 step-card">
 <h3 class="anchored" data-anchor-id="section">01</h3>
-<p><strong>Data Mining</strong> Extract historical sales behavior and physical product attributes.</p>
+<p><strong>Data Collection</strong> collect data from kaggle</p>
 </section>
 <section id="section-1" class="level3 step-card">
 <h3 class="anchored" data-anchor-id="section-1">02</h3>
@@ -219,7 +219,7 @@ window.Quarto = {
 </section>
 <section id="section-3" class="level3 step-card">
 <h3 class="anchored" data-anchor-id="section-3">04</h3>
-<p><strong>Optimization</strong> Use Python <code>PuLP</code> to solve for the optimal <span class="math inline">\(x\)</span>.</p>
+<p><strong>Optimization</strong> Use Python <code>scipy.optimize ,linprog</code> to solve for the optimal <span class="math inline">\(x\)</span>.</p>
 </section>
 <section id="section-4" class="level3 step-card">
 <h3 class="anchored" data-anchor-id="section-4">05</h3>
@@ -478,36 +478,36 @@ window.Quarto = {
 </colgroup>
 <thead>
 <tr class="header">
-<th style="text-align: left;">Business Concept</th>
-<th style="text-align: left;">Attribute</th>
-<th style="text-align: left;">Dataset Source</th>
-<th style="text-align: left;">Role in Model</th>
+<th style="text-align: left;">Component</th>
+<th style="text-align: left;">Symbol</th>
+<th style="text-align: left;">description</th>
+<th style="text-align: left;">Calculation/Data source</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;"><strong>Product Category</strong></td>
-<td style="text-align: left;"><code>product_category_name</code></td>
-<td style="text-align: left;"><code>olist_products</code></td>
-<td style="text-align: left;"><strong>Decision Variable (<span class="math inline">\(x_i\)</span>)</strong></td>
+<td style="text-align: left;">Decision Variable</td>
+<td style="text-align: left;"><span class="math inline">\(x_i\)</span></td>
+<td style="text-align: left;">Quantity of item for category i</td>
+<td style="text-align: left;">product_category_name</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;"><strong>Revenue</strong></td>
-<td style="text-align: left;"><code>payment_value</code> per item</td>
-<td style="text-align: left;"><code>olist_payment</code></td>
-<td style="text-align: left;"><strong>Objective (<span class="math inline">\(Z\)</span>)</strong> <br> Maximize the sum of <span class="math inline">\(r_i \times x_i\)</span>.</td>
+<td style="text-align: left;">Objective coefficient</td>
+<td style="text-align: left;"><span class="math inline">\(r_i\)</span></td>
+<td style="text-align: left;">average revenue per unit for category i</td>
+<td style="text-align: left;"><span class="math inline">\(r_i= \frac{\text{price in category i}}{\text{number item sold in category i}}\)</span></td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;"><strong>Capacity</strong></td>
-<td style="text-align: left;"><code>total(order_item_it)</code></td>
-<td style="text-align: left;"><code>olist_products</code></td>
-<td style="text-align: left;"><strong>Constraint (<span class="math inline">\(C\)</span>)</strong></td>
+<td style="text-align: left;">Constraint Parameter</td>
+<td style="text-align: left;"><span class="math inline">\(D_i\)</span></td>
+<td style="text-align: left;">Demand linit for category i</td>
+<td style="text-align: left;"><span class="math inline">\(D_i= \frac{\text{total item sold in category i}}{total month}\)</span></td>
 </tr>
 <tr class="even">
-<td style="text-align: left;"><strong>Demand</strong></td>
-<td style="text-align: left;"><code>sum(order_item_id)</code> per category</td>
-<td style="text-align: left;"><code>olist_products</code></td>
-<td style="text-align: left;"><strong>Constraint (<span class="math inline">\(D_i\)</span>)</strong></td>
+<td style="text-align: left;">Constraint Parameter</td>
+<td style="text-align: left;"><span class="math inline">\(C_i\)</span></td>
+<td style="text-align: left;">Total handing Capacity</td>
+<td style="text-align: left;"><span class="math inline">\(C_i= \frac{\sum\text{total item sold}}{total month}\)</span></td>
 </tr>
 </tbody>
 </table>
@@ -523,18 +523,6 @@ window.Quarto = {
 <h3 class="anchored" data-anchor-id="mathematical-formulation">
 <i class="bi bi-calculator"></i> The Linear Program
 </h3>
-<!-- SETS & INDICES -->
-<div class="math-sets">
-<strong>Sets &amp; Indices</strong>
-<ul>
-<li>
-<span class="math inline">\(I\)</span>: Set of all product categories (derived from <code>olist_products</code>).
-</li>
-<li>
-<span class="math inline">\(i\)</span>: Index representing a specific category (e.g., <span class="math inline">\(i = \text{Watches}\)</span>).
-</li>
-</ul>
-</div>
 <!-- 1. OBJECTIVE -->
 <div class="math-row">
 <div class="math-label">
@@ -556,7 +544,7 @@ Maximize total revenue (<span class="math inline">\(Z\)</span>) using Price (<sp
 <li>Capacity Constraint
 </li></ol></div>
 <div class="math-desc">
-The total weight cannot exceed the limit (<span class="math inline">\(C\)</span>).
+The total quantity cannot exceed the limit (<span class="math inline">\(C\)</span>).
 </div>
 <div class="eqn-box">
 <span class="math display">\[ \sum_{i \in I} x_i \leq C \]</span>
@@ -587,18 +575,23 @@ We cannot sell more than the historical market demand (<span class="math inline"
 Quantities must be positive integers.
 </div>
 <div class="eqn-box">
-<span class="math display">\[ x_i \geq 0, \quad x_i \in \mathbb{Z}^+ \]</span>
+<span class="math display">\[ x_i \geq 0 \]</span>
 </div>
 
 </div>
 <!-- CLOSING DIV TAG (REPLACES THE BROKEN :::) -->
 </div>
 <p><br></p>
-<section id="result" class="level1">
-<h1>6. Result</h1>
-</section>
-<section id="conclusion" class="level1">
-<h1>7.Conclusion</h1>
+<section id="results" class="level1">
+<h1>6. Results</h1>
+<div class="dataset-car">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="image/output.png" class="img-fluid figure-img"></p>
+<figcaption>Image 1</figcaption>
+</figure>
+</div>
+</div>
 
 
 </section>
