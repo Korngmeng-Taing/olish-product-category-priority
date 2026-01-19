@@ -28,7 +28,7 @@ We are group 2 applying Linear Programming to solve real-world e-commerce challe
 <!-- MEMBER 2 -->
 ::: {.g-col-12 .g-col-md-4}
 ::: {.team-card}
-![](image/mk2.jpg){.team-img}
+![](image/mk.jpg){.team-img}
 
 ### Phal Menghak
 <div class="role">Mathematical Modeler</div>
