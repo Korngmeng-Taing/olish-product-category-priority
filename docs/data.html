@@ -165,7 +165,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title">Data Analysis</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li></ul></div></div>
+<h1 class="title">Data Analysis</h1>
 </div>
 
 
@@ -185,26 +185,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="importing-libraries" class="level2">
 <h2 class="anchored" data-anchor-id="importing-libraries">Importing Libraries</h2>
 <div id="0f9055f5" class="cell" data-execution_count="19">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.ticker <span class="im">as</span> ticker</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
 </div>
 </section>
 <section id="load-the-dataset" class="level2">
 <h2 class="anchored" data-anchor-id="load-the-dataset"><strong>1. Load the dataset</strong></h2>
 <div id="422b706e" class="cell" data-execution_count="20">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>order <span class="op">=</span> pd.read_csv(<span class="st">'./data/olist_orders_dataset.csv'</span>)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>order_item <span class="op">=</span> pd.read_csv(<span class="st">'./data/olist_order_items_dataset.csv'</span>)</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>product <span class="op">=</span> pd.read_csv(<span class="st">'./data/olist_products_dataset.csv'</span>)</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>order_payment <span class="op">=</span> pd.read_csv(<span class="st">'./data/olist_order_payments_dataset.csv'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
 </div>
 </section>
 <section id="data-preparation-and-cleaning" class="level2">
@@ -212,13 +206,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="merge-datasets" class="level3">
 <h3 class="anchored" data-anchor-id="merge-datasets">2.1 Merge Datasets</h3>
 <div id="85504323" class="cell" data-execution_count="21">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> order_item.merge(order_payment, on<span class="op">=</span><span class="st">'order_id'</span>, how<span class="op">=</span><span class="st">'inner'</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df.merge(product, on<span class="op">=</span><span class="st">'product_id'</span>, how<span class="op">=</span><span class="st">'inner'</span>)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> df.merge(order, on<span class="op">=</span><span class="st">'order_id'</span>, how<span class="op">=</span><span class="st">'inner'</span>)</span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>df.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
 <div class="cell-output cell-output-display" data-execution_count="21">
 <div>
 
@@ -382,15 +373,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="handling-missing-values" class="level3">
 <h3 class="anchored" data-anchor-id="handling-missing-values">2.2 Handling Missing Values</h3>
 <div id="2e9d5689" class="cell" data-execution_count="22">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> df[[<span class="st">'order_purchase_timestamp'</span>, <span class="st">'order_id'</span>, <span class="st">'order_item_id'</span>, <span class="st">'product_id'</span>,<span class="st">'product_category_name'</span>, <span class="st">'price'</span>,<span class="st">'payment_value'</span>]].copy()</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>data[<span class="st">'order_purchase_timestamp'</span>] <span class="op">=</span> pd.to_datetime(data[<span class="st">'order_purchase_timestamp'</span>])</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> data.sort_values(by<span class="op">=</span><span class="st">'order_purchase_timestamp'</span>)</span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>data.reset_index(drop<span class="op">=</span><span class="va">True</span>, inplace<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>data[<span class="st">'quarter'</span>] <span class="op">=</span> data[<span class="st">'order_purchase_timestamp'</span>].dt.to_period(<span class="st">'Q'</span>).astype(<span class="bu">str</span>)</span>
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>data.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
 <div class="cell-output cell-output-display" data-execution_count="22">
 <div>
 
@@ -472,10 +460,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <div id="eed16e61" class="cell" data-execution_count="23">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>data.tail()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
 <div class="cell-output cell-output-display" data-execution_count="23">
 <div>
 
@@ -557,10 +542,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <div id="6657a896" class="cell" data-execution_count="24">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>data.info()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>&lt;class 'pandas.core.frame.DataFrame'&gt;
 RangeIndex: 117601 entries, 0 to 117600
@@ -580,25 +562,16 @@ memory usage: 7.2+ MB</code></pre>
 </div>
 </div>
 <div id="8534648a" class="cell" data-execution_count="25">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>data.duplicated().<span class="bu">sum</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
 <div class="cell-output cell-output-display" data-execution_count="25">
 <pre><code>np.int64(686)</code></pre>
 </div>
 </div>
 <div id="21e16438" class="cell" data-execution_count="26">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>data.drop_duplicates(keep<span class="op">=</span><span class="st">'first'</span>, inplace<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
 </div>
 <div id="e2a062cf" class="cell" data-execution_count="27">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>data.isnull().<span class="bu">sum</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
 <div class="cell-output cell-output-display" data-execution_count="27">
 <pre><code>order_purchase_timestamp       0
 order_id                       0
@@ -612,17 +585,12 @@ dtype: int64</code></pre>
 </div>
 </div>
 <div id="e06014ab" class="cell" data-execution_count="28">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>data[<span class="st">'product_category_name'</span>] <span class="op">=</span> data[<span class="st">'product_category_name'</span>].fillna(<span class="st">'unknown'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
 </div>
 </section>
 <section id="data-preprocessing" class="level3">
 <h3 class="anchored" data-anchor-id="data-preprocessing">2.3 Data Preprocessing</h3>
 <div id="d004ba9c" class="cell" data-execution_count="29">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>quarterly_global <span class="op">=</span> data.groupby(<span class="st">'quarter'</span>).agg(</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    num_orders <span class="op">=</span> (<span class="st">'order_id'</span>, <span class="st">'count'</span>),</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    total_revenue<span class="op">=</span>(<span class="st">'payment_value'</span>, <span class="st">'sum'</span>),</span>
@@ -630,7 +598,6 @@ dtype: int64</code></pre>
 <span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>).reset_index()</span>
 <span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>quarterly_global</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
 <div class="cell-output cell-output-display" data-execution_count="29">
 <div>
 
@@ -716,8 +683,6 @@ dtype: int64</code></pre>
 </div>
 </div>
 <div id="8a04a735" class="cell" data-execution_count="30">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Aggregate data for plotting</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>quarters_sorted <span class="op">=</span> <span class="bu">sorted</span>(data[<span class="st">'quarter'</span>].unique())</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>global_trend <span class="op">=</span> data.groupby(<span class="st">'quarter'</span>).agg(</span>
@@ -743,7 +708,6 @@ dtype: int64</code></pre>
 <span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>ax1.legend(loc<span class="op">=</span><span class="st">'upper left'</span>)</span>
 <span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>ax2.legend(loc<span class="op">=</span><span class="st">'upper right'</span>)</span>
 <span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -755,11 +719,8 @@ dtype: int64</code></pre>
 <p>Data from 2016 was excluded from the analysis. Olist operations began late in 2016, making this year incomplete and unsuitable for reliable demand estimation. Including partial-year data could bias demand and capacity estimates downward.</p>
 <p>Only data from 2017 and 2018 was retained to ensure consistency and reliability.</p>
 <div id="c20a579b" class="cell" data-execution_count="31">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> data[data[<span class="st">'order_purchase_timestamp'</span>].dt.year <span class="op">&gt;</span> <span class="dv">2016</span>]</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>data.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
 <div class="cell-output cell-output-display" data-execution_count="31">
 <div>
 
@@ -842,10 +803,7 @@ dtype: int64</code></pre>
 </div>
 <p>Save the cleaned dataset to a new CSV file</p>
 <div id="372db619" class="cell" data-execution_count="32">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>data.to_csv(<span class="st">'./data/cleaned_data.csv'</span>, index<span class="op">=</span><span class="va">False</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
 </div>
 </section>
 </section>
@@ -854,10 +812,7 @@ dtype: int64</code></pre>
 <section id="summary-statistics" class="level3">
 <h3 class="anchored" data-anchor-id="summary-statistics">3.1. Summary Statistics</h3>
 <div id="88153c0d" class="cell" data-execution_count="33">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>data[[<span class="st">'order_item_id'</span>, <span class="st">'price'</span>, <span class="st">'payment_value'</span>]].describe()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
 <div class="cell-output cell-output-display" data-execution_count="33">
 <div>
 
@@ -930,8 +885,6 @@ dtype: int64</code></pre>
 <section id="total-sale-volumn-by-category" class="level3">
 <h3 class="anchored" data-anchor-id="total-sale-volumn-by-category">3.2. Total Sale Volumn by Category</h3>
 <div id="c97012b5" class="cell" data-execution_count="34">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>volume_by_category <span class="op">=</span> (</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    data.groupby(<span class="st">'product_category_name'</span>)</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    .size()</span>
@@ -939,7 +892,6 @@ dtype: int64</code></pre>
 <span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>volume_by_category <span class="op">=</span> volume_by_category.sort_values(by<span class="op">=</span><span class="st">'items_sold'</span>, ascending<span class="op">=</span><span class="va">False</span>)</span>
 <span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>volume_by_category.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
 <div class="cell-output cell-output-display" data-execution_count="34">
 <div>
 
@@ -988,8 +940,6 @@ dtype: int64</code></pre>
 <section id="total-revenue-by-category" class="level3">
 <h3 class="anchored" data-anchor-id="total-revenue-by-category">3.3. Total Revenue by Category</h3>
 <div id="34e79b7d" class="cell" data-execution_count="35">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>revenue_by_category <span class="op">=</span> (</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    data.groupby(<span class="st">'product_category_name'</span>)[<span class="st">'price'</span>]</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    .<span class="bu">sum</span>()</span>
@@ -997,7 +947,6 @@ dtype: int64</code></pre>
 <span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>revenue_by_category <span class="op">=</span> revenue_by_category.sort_values(by<span class="op">=</span><span class="st">'total_revenue'</span>, ascending<span class="op">=</span><span class="va">False</span>)</span>
 <span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>revenue_by_category.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
 <div class="cell-output cell-output-display" data-execution_count="35">
 <div>
 
@@ -1046,8 +995,6 @@ dtype: int64</code></pre>
 <section id="data-visualization" class="level3">
 <h3 class="anchored" data-anchor-id="data-visualization">3.4. Data Visualization</h3>
 <div id="54269813" class="cell" data-execution_count="36">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>fig, ax1 <span class="op">=</span> plt.subplots(<span class="dv">2</span>, <span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">14</span>, <span class="dv">12</span>))</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot Top Categories by Revenue</span></span>
@@ -1070,7 +1017,6 @@ dtype: int64</code></pre>
 <span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()</span>
 <span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -1083,8 +1029,6 @@ dtype: int64</code></pre>
 <section id="average-price-by-category" class="level3">
 <h3 class="anchored" data-anchor-id="average-price-by-category">3.4.1 Average Price by Category</h3>
 <div id="81c90f73" class="cell" data-execution_count="37">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>category_stats <span class="op">=</span> volume_by_category.merge(</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>    revenue_by_category,</span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    on<span class="op">=</span><span class="st">'product_category_name'</span></span>
@@ -1097,7 +1041,6 @@ dtype: int64</code></pre>
 <span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>category_stats.sort_values(</span>
 <span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>    <span class="st">'avg_revenue_per_item'</span>, ascending<span class="op">=</span><span class="va">False</span></span>
 <span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>).head(<span class="dv">10</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
 <div class="cell-output cell-output-display" data-execution_count="37">
 <div>
 
@@ -1190,8 +1133,6 @@ dtype: int64</code></pre>
 </div>
 </div>
 <div id="e7a801de" class="cell" data-execution_count="38">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -1215,7 +1156,6 @@ dtype: int64</code></pre>
 <span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Average Revenue (Price + Freight)'</span>)</span>
 <span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Category'</span>)</span>
 <span id="cb23-23"><a href="#cb23-23" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -1225,8 +1165,6 @@ dtype: int64</code></pre>
 </div>
 </div>
 <div id="cbd01a0e" class="cell" data-execution_count="39">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Grouping by month to see handling trends</span></span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>data[<span class="st">'month_year'</span>] <span class="op">=</span> data[<span class="st">'order_purchase_timestamp'</span>].dt.to_period(<span class="st">'M'</span>)</span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>monthly_volume <span class="op">=</span> data.groupby(<span class="st">'month_year'</span>).size()</span>
@@ -1242,7 +1180,6 @@ dtype: int64</code></pre>
 <span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>    plt.text(x, y <span class="op">+</span> <span class="dv">100</span>, <span class="ss">f'</span><span class="sc">{</span>y<span class="sc">:,}</span><span class="ss">'</span>, ha<span class="op">=</span><span class="st">'center'</span>)</span>
 <span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
 <span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -1252,8 +1189,6 @@ dtype: int64</code></pre>
 </div>
 </div>
 <div id="e4901fae" class="cell" data-execution_count="40">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Grouping by month to see revenue trends</span></span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>data[<span class="st">'month_year'</span>] <span class="op">=</span> data[<span class="st">'order_purchase_timestamp'</span>].dt.to_period(<span class="st">'M'</span>)</span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>monthly_revenue <span class="op">=</span> data.groupby(<span class="st">'month_year'</span>)[<span class="st">'payment_value'</span>].<span class="bu">sum</span>()</span>
@@ -1270,7 +1205,6 @@ dtype: int64</code></pre>
 <span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a><span class="co">#     plt.text(x, y + 10000, f'${y/1000:,.0f}K', ha='center')</span></span>
 <span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
 <span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -1280,8 +1214,6 @@ dtype: int64</code></pre>
 </div>
 </div>
 <div id="8cb0b79f" class="cell" data-execution_count="41">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Aggregate data for plotting</span></span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>quarters_sorted <span class="op">=</span> <span class="bu">sorted</span>(data[<span class="st">'quarter'</span>].unique())</span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>global_trend <span class="op">=</span> data.groupby(<span class="st">'quarter'</span>).agg(</span>
@@ -1313,7 +1245,6 @@ dtype: int64</code></pre>
 <span id="cb26-29"><a href="#cb26-29" aria-hidden="true" tabindex="-1"></a>ax1.legend(loc<span class="op">=</span><span class="st">'upper left'</span>)</span>
 <span id="cb26-30"><a href="#cb26-30" aria-hidden="true" tabindex="-1"></a>ax2.legend(loc<span class="op">=</span><span class="st">'upper right'</span>)</span>
 <span id="cb26-31"><a href="#cb26-31" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</details>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -1398,57 +1329,6 @@ dtype: int64</code></pre>
         container: window.document.getElementById('quarto-embedded-source-code-modal')
       });
       clipboardModal.on('success', onCopySuccess);
-    }
-    const viewSource = window.document.getElementById('quarto-view-source') ||
-                       window.document.getElementById('quarto-code-tools-source');
-    if (viewSource) {
-      const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
-      viewSource.addEventListener("click", function(e) {
-        if (sourceUrl) {
-          // rstudio viewer pane
-          if (/\bcapabilities=\b/.test(window.location)) {
-            window.open(sourceUrl);
-          } else {
-            window.location.href = sourceUrl;
-          }
-        } else {
-          const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
-          modal.show();
-        }
-        return false;
-      });
-    }
-    function toggleCodeHandler(show) {
-      return function(e) {
-        const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
-        for (let i=0; i<detailsSrc.length; i++) {
-          const details = detailsSrc[i].parentElement;
-          if (show) {
-            details.open = true;
-          } else {
-            details.removeAttribute("open");
-          }
-        }
-        const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
-        const fromCls = show ? "hidden" : "unhidden";
-        const toCls = show ? "unhidden" : "hidden";
-        for (let i=0; i<cellCodeDivs.length; i++) {
-          const codeDiv = cellCodeDivs[i];
-          if (codeDiv.classList.contains(fromCls)) {
-            codeDiv.classList.remove(fromCls);
-            codeDiv.classList.add(toCls);
-          } 
-        }
-        return false;
-      }
-    }
-    const hideAllCode = window.document.getElementById("quarto-hide-all-code");
-    if (hideAllCode) {
-      hideAllCode.addEventListener("click", toggleCodeHandler(false));
-    }
-    const showAllCode = window.document.getElementById("quarto-show-all-code");
-    if (showAllCode) {
-      showAllCode.addEventListener("click", toggleCodeHandler(true));
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);

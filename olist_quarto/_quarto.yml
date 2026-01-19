@@ -24,8 +24,8 @@ format:
     #css: styles.css
     page-layout: full # Uses full screen width (Crucial for DataViz)
     smooth-scroll: true # Nicer scrolling experience
-    code-fold: true
-    code-tools: true # Adds a "Show Source" button at the top right
+    #code-fold: true
+    #code-tools: true # Adds a "Show Source" button at the top right
     df-print: paged
 
 execute:
